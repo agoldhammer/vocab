@@ -2,7 +2,7 @@ import docx
 # import click
 import sqlite3
 
-myfname = "/Users/agold/Google Drive/Vocabulary/German.docx"
+myfname = "/Users/agold/Google Drive/Vocabulary/German2.docx"
 
 
 def get_doc(fname):
