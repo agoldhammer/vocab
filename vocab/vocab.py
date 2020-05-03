@@ -41,7 +41,7 @@ def store_data(data):
 @click.argument('fname')
 @click.argument('dbname')
 def execute(store, fname, dbname):
-    #FIXME
+    # FIXME
     fname = default_path + fname
     doc = get_doc(fname)
     vitems = get_vitems(doc)
