@@ -1,8 +1,9 @@
 import docx
-# import click
+import click
 import sqlite3
 
 myfname = "/Users/agold/Google Drive/Vocabulary/German2.docx"
+default_path = '/Users/agold/Google Drive/Vocabulary/'
 
 
 def get_doc(fname):
@@ -34,8 +35,15 @@ def store_data(data):
     conn.close()
 
 
-if __name__ == "__main__":
-    doc = get_doc(myfname)
+@click.command()
+@click.option('--store/--nostore', default=False,
+              help="store/nostore in detabase")
+@click.argument('fname')
+@click.argument('dbname')
+def execute(store, fname, dbname):
+    #FIXME
+    fname = default_path + fname
+    doc = get_doc(fname)
     vitems = get_vitems(doc)
     valid_vitems = []
     invalid_vitems = []
@@ -49,7 +57,12 @@ if __name__ == "__main__":
             invalid_vitems.append(v)
     for vitem in valid_vitems:
         print(vitem)
-    store_data([tuple(vitem) for vitem in valid_vitems])
+    if store:
+        store_data([tuple(vitem) for vitem in valid_vitems])
     for vitem in invalid_vitems:
         print(f'Bad vitem: {vitem}')
     print(f'Total vitems: {len(vitems)}')
+
+
+if __name__ == "__main__":
+    execute()
