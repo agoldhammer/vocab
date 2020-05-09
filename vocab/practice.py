@@ -40,20 +40,32 @@ def get_qry(curs, qry):
     return map(Vitem._make, curs)
 
 
-def show_forward(n, curs):
+def show_vitem(vitem, forward):
+    src = vitem.src
+    target = vitem.target
+    if forward:
+        print(Fore.RED + f'{src}')
+    else:
+        print(Fore.MAGENTA + f'{target}')
+    wait_to_show()
+    if forward:
+        print(Fore.BLUE + f'{target}\n')
+    else:
+        print(Fore.RED + f'{src}\n')
+    if vitem.supp != '':
+        print(Fore.CYAN + vitem.supp)
+    print(Fore.GREEN + 'Press c if correct')
+    # FIXME
+    return correctp()
+
+
+def show_selected(n, curs, forward):
     qry_all = f"""
                SELECT * FROM vocab
                ORDER BY RANDOM() LIMIT {n}"""
     vitems = get_qry(curs, qry_all)
     for vitem in vitems:
-        print(Fore.RED + f'{vitem.src}')
-        wait_to_show()
-        print(Fore.BLUE + f'{vitem.target}\n')
-        if vitem.supp != '':
-            print(Fore.CYAN + vitem.supp)
-        print(Fore.GREEN + 'Press c if correct')
-        # FIXME
-        _ = correctp()
+        _ = show_vitem(vitem, forward)
     count = get_count(curs)
     print(f'Count: {count}')
 
@@ -66,7 +78,7 @@ def show_forward(n, curs):
               help='forward: show source, badkward:show target')
 def practice(n, failed, forward):
     conn, curs = db_connect()
-    show_forward(n, curs)
+    show_selected(n, curs, forward)
     conn.close()
 
 
