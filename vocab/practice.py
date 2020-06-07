@@ -4,12 +4,19 @@ from getch import getch
 from collections import namedtuple
 from colorama import init, Fore
 from enum import Enum
+from dataclasses import dataclass, field
+from typing import List
 
 
 class Keypress(Enum):
     RIGHT = 0
     WRONG = 1
     OTHER = 2
+
+
+@dataclass
+class ToModify:
+    rows_modified: List[int] = field(default_factory=list)
 
 
 Vitem = namedtuple('Vitem', ['src', 'target', 'supp', 'fwd', 'bkwd'])
@@ -41,7 +48,6 @@ def get_count(curs):
 
 
 def db_connect(dbname):
-    # FIXME
     conn = sqlite3.connect(dbname)
     return conn, conn.cursor()
 
