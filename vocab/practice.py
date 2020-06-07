@@ -3,8 +3,14 @@ import click
 from getch import getch
 from collections import namedtuple
 from colorama import init, Fore
+from enum import Enum
 
-init()
+
+class Keypress(Enum):
+    RIGHT = 0
+    WRONG = 1
+    OTHER = 2
+
 
 Vitem = namedtuple('Vitem', ['src', 'target', 'supp', 'fwd', 'bkwd'])
 
@@ -21,7 +27,12 @@ def wait_to_show():
 
 def correctp():
     c = getch()
-    return True if c == 'c' else False
+    if c == 'r':
+        return Keypress.RIGHT
+    elif c == 'w':
+        return Keypress.WRONG
+    else:
+        return Keypress.OTHER
 
 
 def get_count(curs):
@@ -54,7 +65,7 @@ def show_vitem(vitem, forward):
         print(Fore.RED + f'{src}\n')
     if vitem.supp != '':
         print(Fore.CYAN + vitem.supp)
-    print(Fore.GREEN + 'Press c if correct')
+    print(Fore.GREEN + 'Press r if right, w if wrong')
     # FIXME
     return correctp()
 
@@ -65,7 +76,12 @@ def show_selected(n, curs, forward):
                ORDER BY RANDOM() LIMIT {n}"""
     vitems = get_qry(curs, qry_all)
     for vitem in vitems:
-        _ = show_vitem(vitem, forward)
+        key = show_vitem(vitem, forward)
+        if key == Keypress.OTHER:
+            show_vitem(vitem, forward)
+        else:
+            # FIXME
+            print("next")
     count = get_count(curs)
     print(f'Count: {count}')
 
@@ -84,4 +100,5 @@ def practice(n, failed, forward, dbname):
 
 
 if __name__ == "__main__":
+    init()
     practice()
