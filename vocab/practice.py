@@ -26,13 +26,13 @@ def wait_to_show():
 
 
 def correctp():
-    c = getch()
-    if c == 'r':
-        return Keypress.RIGHT
-    elif c == 'w':
-        return Keypress.WRONG
-    else:
-        return Keypress.OTHER
+    while True:
+        c = getch()
+        if c == 'r':
+            return Keypress.RIGHT
+        elif c == 'w':
+            return Keypress.WRONG
+        print('Must press r or w')
 
 
 def get_count(curs):
