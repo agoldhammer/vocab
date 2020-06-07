@@ -3,5 +3,8 @@
 		{
 			"path": "."
 		}
-	]
+	],
+	"settings": {
+		"python.pythonPath": "/Users/agold/anaconda/envs/vocab/bin/python"
+	}
 }

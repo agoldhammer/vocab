@@ -27,8 +27,8 @@ def validate_vitem(vitem):
         return False, vitem
 
 
-def store_data(data):
-    conn = sqlite3.connect('german.db')
+def store_data(data, dbname):
+    conn = sqlite3.connect(dbname)
     c = conn.cursor()
     c.executemany("INSERT INTO vocab VALUES (?, ?, ?, ?, ?)", data)
     conn.commit()
@@ -42,7 +42,8 @@ def store_data(data):
 @click.argument('dbname')
 def execute(store, fname, dbname):
     # FIXME
-    fname = default_path + fname
+    fname = default_path + fname + '.docx'
+    dbname = dbname + '.db'
     doc = get_doc(fname)
     vitems = get_vitems(doc)
     valid_vitems = []
@@ -58,7 +59,7 @@ def execute(store, fname, dbname):
     for vitem in valid_vitems:
         print(vitem)
     if store:
-        store_data([tuple(vitem) for vitem in valid_vitems])
+        store_data([tuple(vitem) for vitem in valid_vitems], dbname)
     for vitem in invalid_vitems:
         print(f'Bad vitem: {vitem}')
     print(f'Total vitems: {len(vitems)}')

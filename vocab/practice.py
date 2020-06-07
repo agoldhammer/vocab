@@ -29,9 +29,9 @@ def get_count(curs):
     return next(curs)[0]
 
 
-def db_connect():
+def db_connect(dbname):
     # FIXME
-    conn = sqlite3.connect('german.db')
+    conn = sqlite3.connect(dbname)
     return conn, conn.cursor()
 
 
@@ -76,8 +76,9 @@ def show_selected(n, curs, forward):
               help='show previously failed only')
 @click.option('--forward/--backward', default=True,
               help='forward: show source, badkward:show target')
-def practice(n, failed, forward):
-    conn, curs = db_connect()
+@click.argument('dbname')
+def practice(n, failed, forward, dbname):
+    conn, curs = db_connect(dbname + '.db')
     show_selected(n, curs, forward)
     conn.close()
 
