@@ -1,6 +1,7 @@
-import docx
-import click
 import sqlite3
+
+import click
+import docx
 
 myfname = "/Users/agold/Google Drive/Vocabulary/German2.docx"
 default_path = '/Users/agold/Google Drive/Vocabulary/'
