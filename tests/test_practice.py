@@ -1,5 +1,6 @@
-from vocab import practice
 from unittest.mock import Mock
+
+from vocab import practice
 
 
 def test_correctp():
