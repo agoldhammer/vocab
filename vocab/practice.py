@@ -1,11 +1,12 @@
 import sqlite3
-import click
-from getch import getch
 from collections import namedtuple
-from colorama import init, Fore
-from enum import Enum
 from dataclasses import dataclass, field
+from enum import Enum
 from typing import List
+
+import click
+from colorama import Fore, init
+from getch import getch
 
 
 class Keypress(Enum):
@@ -17,6 +18,9 @@ class Keypress(Enum):
 @dataclass
 class ToModify:
     rows_modified: List[int] = field(default_factory=list)
+
+    def append(self, nrow: int):
+        self.rows_modified.append(nrow)
 
 
 Vitem = namedtuple('Vitem', ['src', 'target', 'supp', 'fwd', 'bkwd'])
