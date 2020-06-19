@@ -21,7 +21,7 @@ class ToModify:
         self.rows_modified.append(nrow)
 
 
-Vitem = namedtuple('Vitem', ['src', 'target', 'supp', 'fwd', 'bkwd'])
+Vitem = namedtuple("Vitem", ["src", "target", "supp", "fwd", "bkwd"])
 
 
 qry_count = """
@@ -37,11 +37,11 @@ def wait_to_show():
 def correctp():
     while True:
         c = getch()
-        if c == 'r':
+        if c == "r":
             return Keypress.RIGHT
-        elif c == 'w':
+        elif c == "w":
             return Keypress.WRONG
-        print('Must press r or w')
+        print("Must press r or w")
 
 
 def get_count(curs):
@@ -68,12 +68,12 @@ def show_vitem(vitem, forward):
         print(target)
     wait_to_show()
     if forward:
-        print(f'{target}\n')
+        print(f"{target}\n")
     else:
-        print(f'{src}\n')
-    if vitem.supp != '':
+        print(f"{src}\n")
+    if vitem.supp != "":
         print(vitem.supp)
-    print('Press r if right, w if wrong')
+    print("Press r if right, w if wrong")
     # FIXME
     return correctp()
 
@@ -91,7 +91,7 @@ def show_selected(n, curs, forward):
             # FIXME
             print("next")
     count = get_count(curs)
-    print(f'Count: {count}')
+    print(f"Count: {count}")
 
 
 # @click.command()
@@ -110,4 +110,4 @@ def show_selected(n, curs, forward):
 if __name__ == "__main__":
     # init()
     # practice()
-    print('should be called from cli')
+    print("should be called from cli")

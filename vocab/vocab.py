@@ -4,7 +4,7 @@ import click
 import docx
 
 myfname = "/Users/agold/Google Drive/Vocabulary/German2.docx"
-default_path = '/Users/agold/Google Drive/Vocabulary/'
+default_path = "/Users/agold/Google Drive/Vocabulary/"
 
 
 def get_doc(fname):
@@ -12,7 +12,7 @@ def get_doc(fname):
 
 
 def get_vitems(doc):
-    return [p.text.split(':') for p in doc.paragraphs]
+    return [p.text.split(":") for p in doc.paragraphs]
 
 
 def validate_vitem(vitem):
@@ -20,7 +20,7 @@ def validate_vitem(vitem):
     string added to supp field if nec"""
     lvitem = len(vitem)
     if lvitem == 2:
-        vitem.append('')
+        vitem.append("")
         return True, vitem
     elif lvitem == 3:
         return True, vitem
@@ -37,14 +37,13 @@ def store_data(data, dbname):
 
 
 @click.command()
-@click.option('--store/--nostore', default=False,
-              help="store/nostore in detabase")
-@click.argument('fname')
-@click.argument('dbname')
+@click.option("--store/--nostore", default=False, help="store/nostore in detabase")
+@click.argument("fname")
+@click.argument("dbname")
 def execute(store, fname, dbname):
     # FIXME
-    fname = default_path + fname + '.docx'
-    dbname = dbname + '.db'
+    fname = default_path + fname + ".docx"
+    dbname = dbname + ".db"
     doc = get_doc(fname)
     vitems = get_vitems(doc)
     valid_vitems = []
@@ -53,8 +52,7 @@ def execute(store, fname, dbname):
         status, v = validate_vitem(vitem)
         print(status, v)
         if status:
-            valid_vitems.append([v[0].strip(), v[1].strip(),
-                                v[2].strip(), 0, 0])
+            valid_vitems.append([v[0].strip(), v[1].strip(), v[2].strip(), 0, 0])
         else:
             invalid_vitems.append(v)
     for vitem in valid_vitems:
@@ -62,8 +60,8 @@ def execute(store, fname, dbname):
     if store:
         store_data([tuple(vitem) for vitem in valid_vitems], dbname)
     for vitem in invalid_vitems:
-        print(f'Bad vitem: {vitem}')
-    print(f'Total vitems: {len(vitems)}')
+        print(f"Bad vitem: {vitem}")
+    print(f"Total vitems: {len(vitems)}")
 
 
 if __name__ == "__main__":

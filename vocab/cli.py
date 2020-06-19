@@ -9,11 +9,11 @@ from vocab.practice import show_selected
 
 
 def db_connect(dbname):
-    dbname = dbname + '.db'
+    dbname = dbname + ".db"
     # FIXME
-    dbfile = Path.home() / Path('Prog/vocab/vocab') / Path(dbname)
+    dbfile = Path.home() / Path("Prog/vocab/vocab") / Path(dbname)
     if not os.path.exists(dbfile):
-        print(f'Error: database {dbfile} not found')
+        print(f"Error: database {dbfile} not found")
         sys.exit(1)
     conn = sqlite3.connect(dbfile)
     return conn, conn.cursor()
@@ -25,12 +25,14 @@ def main():
 
 
 @main.command()
-@click.option('-n', default=10, help='number of samples')
-@click.option('--failed/--all', default=True,
-              help='show previously failed only')
-@click.option('--forward/--backward',
-              default=True, help='forward: show source, badkward:show target')
-@click.argument('dbname')
+@click.option("-n", default=10, help="number of samples")
+@click.option("--failed/--all", default=True, help="show previously failed only")
+@click.option(
+    "--forward/--backward",
+    default=True,
+    help="forward: show source, badkward:show target",
+)
+@click.argument("dbname")
 def practice(n, failed, forward, dbname):
     conn, curs = db_connect(dbname)
     show_selected(n, curs, forward)
