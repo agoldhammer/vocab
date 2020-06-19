@@ -1,4 +1,5 @@
 *.docx
 *.db
+*.bak
 __pycache__/
 vocab.egg-info/
