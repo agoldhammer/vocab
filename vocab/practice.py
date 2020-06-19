@@ -4,8 +4,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import List
 
-import click
-from colorama import Fore, init
+# import click
+# from colorama import Fore, init
 from getch import getch
 
 
@@ -65,17 +65,17 @@ def show_vitem(vitem, forward):
     src = vitem.src
     target = vitem.target
     if forward:
-        print(Fore.RED + f'{src}')
+        print(src)
     else:
-        print(Fore.MAGENTA + f'{target}')
+        print(target)
     wait_to_show()
     if forward:
-        print(Fore.BLUE + f'{target}\n')
+        print(f'{target}\n')
     else:
-        print(Fore.RED + f'{src}\n')
+        print(f'{src}\n')
     if vitem.supp != '':
-        print(Fore.CYAN + vitem.supp)
-    print(Fore.GREEN + 'Press r if right, w if wrong')
+        print(vitem.supp)
+    print('Press r if right, w if wrong')
     # FIXME
     return correctp()
 
@@ -96,19 +96,20 @@ def show_selected(n, curs, forward):
     print(f'Count: {count}')
 
 
-@click.command()
-@click.option('-n', default=10, help='number of samples')
-@click.option('--failed/--all', default=True,
-              help='show previously failed only')
-@click.option('--forward/--backward', default=True,
-              help='forward: show source, badkward:show target')
-@click.argument('dbname')
-def practice(n, failed, forward, dbname):
-    conn, curs = db_connect(dbname + '.db')
-    show_selected(n, curs, forward)
-    conn.close()
+# @click.command()
+# @click.option('-n', default=10, help='number of samples')
+# @click.option('--failed/--all', default=True,
+#               help='show previously failed only')
+# @click.option('--forward/--backward', default=True,
+#               help='forward: show source, badkward:show target')
+# @click.argument('dbname')
+# def practice(n, failed, forward, dbname):
+#     conn, curs = db_connect(dbname + '.db')
+#     show_selected(n, curs, forward)
+#     conn.close()
 
 
 if __name__ == "__main__":
-    init()
-    practice()
+    # init()
+    # practice()
+    print('should be called from cli')
