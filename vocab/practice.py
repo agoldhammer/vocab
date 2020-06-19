@@ -4,8 +4,6 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import List
 
-# import click
-# from colorama import Fore, init
 from getch import getch
 
 
