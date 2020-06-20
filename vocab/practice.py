@@ -11,7 +11,7 @@ class Keypress(Enum):
     WRONG = 1
     OTHER = 2
 
-
+# FIXME: this won't be needed if cursor modified after each item
 @dataclass
 class ToModify:
     rows_modified: List[int] = field(default_factory=list)
@@ -34,6 +34,11 @@ def wait_to_show():
 
 
 def correctp():
+    """keypress filer: allow only r or w
+
+    Returns:
+        Keypress enum: returns Keypress.RIGHT, WRONG, or OTHER
+    """
     while True:
         c = getch()
         if c == "r":
@@ -44,6 +49,14 @@ def correctp():
 
 
 def get_count(curs):
+    """count items in the db
+
+    Args:
+        curs (dbcursor): sql cursor
+
+    Returns:
+        int: number of items in db
+    """
     curs.execute(qry_count)
     return next(curs)[0]
 
@@ -66,6 +79,15 @@ def fetch_nitems(curs, n):
 
 
 def show_vitem(vitem, forward):
+    """display vitem
+
+    Args:
+        vitem (Vitem): named tuple
+        forward (Bool): if True, display source first; else display target
+
+    Returns:
+        Keypress.Enum: see correctp return values
+    """
     src = vitem.src
     target = vitem.target
     if forward:
