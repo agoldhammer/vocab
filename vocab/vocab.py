@@ -4,12 +4,22 @@ from vocab.fileman import get_fqdocname, db_connect
 
 
 def get_doc(fname):
+    """given a base file name, find the fully qualified
+    filename and make Python readable with docx odule
+
+    Args:
+        fname (Str): base file name, w/o ext or path
+
+    Returns:
+        docx.Document: python readable version of the docx file
+    """
     fqname = get_fqdocname(fname)
     return docx.Document(fqname)
 
 
 def get_vitems(doc):
-    """return view items
+    """return view items, which are lists of three strings,
+       one for each part of the :-separated line in the vocab doc
 
     Args:
         doc ([docx.Document]): [description]
@@ -34,6 +44,13 @@ def validate_vitem(vitem):
 
 
 def store_data(data, dbname):
+    """takes a list of 5-tuples representing vitems
+    and stores in db dbname
+
+    Args:
+        data (List[5-tuples]): list of 5-tuples representing vitems
+        dbname (Str): base dbname without ext or path
+    """
     conn = db_connect(dbname)
     c = conn.cursor()
     c.executemany("INSERT INTO vocab VALUES (?, ?, ?, ?, ?)", data)
