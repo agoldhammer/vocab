@@ -1,4 +1,3 @@
-import sqlite3
 from collections import namedtuple
 from dataclasses import dataclass, field
 from enum import Enum
@@ -47,11 +46,6 @@ def correctp():
 def get_count(curs):
     curs.execute(qry_count)
     return next(curs)[0]
-
-
-def db_connect(dbname):
-    conn = sqlite3.connect(dbname)
-    return conn, conn.cursor()
 
 
 def get_qry(curs, qry):
