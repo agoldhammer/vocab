@@ -1,3 +1,6 @@
 central command is slexy
 slexy addvocab --store German8 german
 slexy practice -n 57 german
+
+vocabulary in .docx files formatted thus:
+gut: good: explanatory stuff if desired
