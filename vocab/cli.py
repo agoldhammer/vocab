@@ -16,14 +16,20 @@ def main():
 @click.option(
     "--forward/--backward",
     default=True,
-    help="forward: show source first, badkward: show target first",
+    help="forward: show source first, backward: show target first",
 )
 @click.argument("dbname")
 def practice(n, failed, forward, dbname):
-    conn = db_connect(dbname)
-    curs = conn.cursor()
-    show_selected(n, curs, forward)
-    conn.close()
+    conn = None
+    try:
+        conn = db_connect(dbname)
+        curs = conn.cursor()
+        show_selected(n, curs, forward)
+    except Exception as e:
+        print(e)
+    finally:
+        if conn:
+            conn.close()
 
 
 @main.command()

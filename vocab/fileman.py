@@ -1,12 +1,15 @@
 # file manager for slexy
 
 import os
-import sys
 import sqlite3
 from pathlib import Path
 
 DBDIR = "Prog/vocab/vocab"
 VOCABDIR = "Google Drive/Vocabulary"
+
+
+class FilemanError(Exception):
+    pass
 
 
 def make_fqname(fname, fpath):
@@ -16,14 +19,12 @@ def make_fqname(fname, fpath):
     elif fpath == VOCABDIR:
         ext = ".docx"
     else:
-        print(f"Error: bad path {fpath}")
-        sys.exit(1)
+        raise FilemanError(f"Error: bad path {fpath}")
 
     fname = fname + ext
     fqname = Path.home() / Path(fpath) / Path(fname)
     if not os.path.exists(fqname):
-        print(f"Error: file {fqname} not found")
-        sys.exit(1)
+        raise FilemanError(f"Error: file {fqname} not found")
     return fqname
 
 
