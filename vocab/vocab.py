@@ -1,12 +1,11 @@
-import sqlite3
-
 import docx
 
-default_path = "/Users/agold/Google Drive/Vocabulary/"
+from vocab.fileman import get_fqdocname, db_connect
 
 
 def get_doc(fname):
-    return docx.Document(fname)
+    fqname = get_fqdocname(fname)
+    return docx.Document(fqname)
 
 
 def get_vitems(doc):
@@ -27,7 +26,7 @@ def validate_vitem(vitem):
 
 
 def store_data(data, dbname):
-    conn = sqlite3.connect(dbname)
+    conn = db_connect(dbname)
     c = conn.cursor()
     c.executemany("INSERT INTO vocab VALUES (?, ?, ?, ?, ?)", data)
     conn.commit()
@@ -36,8 +35,6 @@ def store_data(data, dbname):
 
 def execute(store, fname, dbname):
     # FIXME
-    fname = default_path + fname + ".docx"
-    dbname = dbname + ".db"
     doc = get_doc(fname)
     vitems = get_vitems(doc)
     valid_vitems = []

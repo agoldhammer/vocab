@@ -1,23 +1,8 @@
-import os
-import sqlite3
-import sys
-from pathlib import Path
-
 import click
 
 from vocab.practice import show_selected
 from vocab.vocab import execute
-
-
-def db_connect(dbname):
-    dbname = dbname + ".db"
-    # FIXME
-    dbfile = Path.home() / Path("Prog/vocab/vocab") / Path(dbname)
-    if not os.path.exists(dbfile):
-        print(f"Error: database {dbfile} not found")
-        sys.exit(1)
-    conn = sqlite3.connect(dbfile)
-    return conn, conn.cursor()
+from vocab.fileman import db_connect
 
 
 @click.group()
@@ -31,11 +16,12 @@ def main():
 @click.option(
     "--forward/--backward",
     default=True,
-    help="forward: show source, badkward:show target",
+    help="forward: show source first, badkward: show target first",
 )
 @click.argument("dbname")
 def practice(n, failed, forward, dbname):
-    conn, curs = db_connect(dbname)
+    conn = db_connect(dbname)
+    curs = conn.cursor()
     show_selected(n, curs, forward)
     conn.close()
 
