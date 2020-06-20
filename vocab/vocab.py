@@ -59,7 +59,14 @@ def store_data(data, dbname):
 
 
 def execute(store, fname, dbname):
-    # FIXME
+    """if store == True, store vitems from doc fname in db
+    named dbname; else just display the vitems on the console
+
+    Args:
+        store (Bool): store in db if true, else dry run
+        fname (Str): base name of docx vocab file, w/o ext
+        dbname (Str): base name of db file, w/o ext
+    """
     doc = get_doc(fname)
     vitems = get_vitems(doc)
     valid_vitems = []
@@ -81,4 +88,4 @@ def execute(store, fname, dbname):
 
 
 if __name__ == "__main__":
-    execute()
+    print("This file should only be called via cli")
