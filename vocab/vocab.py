@@ -1,9 +1,7 @@
 import sqlite3
 
-import click
 import docx
 
-myfname = "/Users/agold/Google Drive/Vocabulary/German2.docx"
 default_path = "/Users/agold/Google Drive/Vocabulary/"
 
 
@@ -36,10 +34,6 @@ def store_data(data, dbname):
     conn.close()
 
 
-@click.command()
-@click.option("--store/--nostore", default=False, help="store/nostore in detabase")
-@click.argument("fname")
-@click.argument("dbname")
 def execute(store, fname, dbname):
     # FIXME
     fname = default_path + fname + ".docx"

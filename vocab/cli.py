@@ -6,6 +6,7 @@ from pathlib import Path
 import click
 
 from vocab.practice import show_selected
+from vocab.vocab import execute
 
 
 def db_connect(dbname):
@@ -40,5 +41,8 @@ def practice(n, failed, forward, dbname):
 
 
 @main.command()
-def addvocab():
-    click.echo("called addvocab")
+@click.option("--store/--nostore", default=False, help="store/nostore in detabase")
+@click.argument("fname")
+@click.argument("dbname")
+def addvocab(store, fname, dbname):
+    execute(store, fname, dbname)
