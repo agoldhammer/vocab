@@ -11,6 +11,7 @@ class Keypress(Enum):
     WRONG = 1
     OTHER = 2
 
+
 # FIXME: this won't be needed if cursor modified after each item
 @dataclass
 class ToModify:
