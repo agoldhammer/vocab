@@ -73,6 +73,14 @@ def show_vitem(vitem, forward):
 
 
 def show_selected(n, curs, forward):
+    """show n vitems from curs
+    with forward/backward option
+
+    Args:
+        n (int): no of itmes to show
+        curs (cursor): db cursor
+        forward (Bool): True if show source first
+    """    
     qry_all = f"""
                SELECT * FROM vocab
                ORDER BY RANDOM() LIMIT {n}"""

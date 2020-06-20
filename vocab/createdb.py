@@ -3,6 +3,13 @@ import sys
 
 
 def create_db(name):
+    """create db for use by slexy
+    fields: src text, target text, supplementary texxt,
+    learned from [source], learned to [target]
+
+    Args:
+        name (str): name of db to create, w/o extension
+    """    
     conn = sqlite3.connect(name + ".db")
     curs = conn.cursor()
     curs.execute(
