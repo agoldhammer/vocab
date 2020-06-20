@@ -9,6 +9,14 @@ def get_doc(fname):
 
 
 def get_vitems(doc):
+    """return view items
+
+    Args:
+        doc ([docx.Document]): [description]
+
+    Returns:
+        [list[Str]]: [3-segment list of strings for each view items]
+    """
     return [p.text.split(":") for p in doc.paragraphs]
 
 
