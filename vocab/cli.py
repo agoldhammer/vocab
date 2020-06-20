@@ -37,4 +37,7 @@ def practice(n, failed, forward, dbname):
 @click.argument("fname")
 @click.argument("dbname")
 def addvocab(store, fname, dbname):
-    execute(store, fname, dbname)
+    try:
+        execute(store, fname, dbname)
+    except Exception as e:
+        print(e)
