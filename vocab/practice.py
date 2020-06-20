@@ -20,7 +20,7 @@ class ToModify:
         self.rows_modified.append(nrow)
 
 
-Vitem = namedtuple("Vitem", ["src", "target", "supp", "fwd", "bkwd"])
+Vitem = namedtuple("Vitem", ["rowid", "src", "target", "supp", "fwd", "bkwd"])
 
 
 qry_count = """
@@ -48,8 +48,20 @@ def get_count(curs):
     return next(curs)[0]
 
 
-def get_qry(curs, qry):
-    curs.execute(qry)
+def fetch_nitems(curs, n):
+    """fetch n items from the db
+
+    Args:
+        curs (db cursort): sql cursor
+        n (int): number of items to fetch
+
+    Returns:
+        list[Vitems]: list of Vitem namedtuples, incl rowid
+    """
+    qry_nitems = f"""
+               SELECT rowid, * FROM vocab
+               ORDER BY RANDOM() LIMIT {n}"""
+    curs.execute(qry_nitems)
     return map(Vitem._make, curs)
 
 
@@ -80,18 +92,15 @@ def show_selected(n, curs, forward):
         n (int): no of itmes to show
         curs (cursor): db cursor
         forward (Bool): True if show source first
-    """    
-    qry_all = f"""
-               SELECT * FROM vocab
-               ORDER BY RANDOM() LIMIT {n}"""
-    vitems = get_qry(curs, qry_all)
+    """
+    vitems = fetch_nitems(curs, n)
     for vitem in vitems:
         key = show_vitem(vitem, forward)
         if key == Keypress.OTHER:
             show_vitem(vitem, forward)
         else:
             # FIXME
-            print("next")
+            print(f"next after row {vitem.rowid}")
     count = get_count(curs)
     print(f"Count: {count}")
 
