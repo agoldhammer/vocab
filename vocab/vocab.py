@@ -3,12 +3,12 @@ import docx
 from vocab.fileman import get_fqdocname, db_connect
 
 
-def get_doc(fname):
+def get_doc(fname: str) -> docx.Document:
     """given a base file name, find the fully qualified
     filename and make Python readable with docx odule
 
     Args:
-        fname (Str): base file name, w/o ext or path
+        fname (str): base file name, w/o ext or path
 
     Returns:
         docx.Document: python readable version of the docx file
