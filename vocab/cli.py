@@ -23,12 +23,12 @@ def practice(n, failed, forward, dbname):
     conn = None
     try:
         conn = db_connect(dbname)
-        curs = conn.cursor()
-        show_selected(n, curs, forward)
+        show_selected(n, conn, forward)
     except Exception as e:
         print(e)
     finally:
         if conn:
+            conn.commit()
             conn.close()
 
 
