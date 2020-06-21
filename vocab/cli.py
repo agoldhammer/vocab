@@ -23,7 +23,7 @@ def practice(n, failed, forward, dbname):
     conn = None
     try:
         conn = db_connect(dbname)
-        show_selected(n, conn, forward)
+        show_selected(n, conn, forward, failed)
     except Exception as e:
         print(e)
     finally:

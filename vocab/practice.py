@@ -24,14 +24,12 @@ class ToModify:
 Vitem = namedtuple("Vitem", ["rowid", "src", "target", "supp", "fwd", "bkwd"])
 
 
-qry_count = """
-SELECT COUNT(*) FROM vocab
-"""
-
-
 def wait_to_show():
-    # print('Press key to show definition')
-    getch()
+    "show definition only after pressing spacebar"
+    while True:
+        print("Press spacebar to show definition")
+        if getch() == " ":
+            return
 
 
 def correctp():
@@ -58,6 +56,7 @@ def get_count(curs):
     Returns:
         int: number of items in db
     """
+    qry_count = "SELECT COUNT(*) FROM vocab"
     curs.execute(qry_count)
     return next(curs)[0]
 
@@ -107,24 +106,44 @@ def show_vitem(vitem, forward):
     return correctp()
 
 
-def show_selected(n, curs, forward):
+def update_learned(key, forward, row, conn):
+    """update proper learned field if keypress was RIGHT
+
+    Args:
+        key (Keypress): RIGHT or WRONG
+        forward (bool): True if forward direction
+        row (int): rowid of record to update
+        conn (db connection): connection
+    """
+    if key == Keypress.RIGHT:
+        cursor = conn.cursor()
+        field = "lrd_from" if forward else "lrd_to"
+        sql = f"UPDATE vocab SET {field} = 1 WHERE ROWID = {row}"
+        cursor.execute(sql)
+        # DEBUG
+        # print(f"updated {row}")
+        conn.commit()
+
+
+def show_selected(n, conn, forward, failed):
     """show n vitems from curs
     with forward/backward option
 
     Args:
         n (int): no of itmes to show
-        curs (cursor): db cursor
+        conn (connection): db connection
         forward (Bool): True if show source first
+        failed (bool): if True, show failed for give direction only
     """
-    vitems = fetch_nitems(curs, n)
+    item_cursor = conn.cursor()
+    # FIXME: need to implement fetch for failed only
+    vitems = fetch_nitems(item_cursor, n)
     for vitem in vitems:
         key = show_vitem(vitem, forward)
-        if key == Keypress.OTHER:
-            show_vitem(vitem, forward)
-        else:
-            # FIXME
-            print(f"next after row {vitem.rowid}")
-    count = get_count(curs)
+        # DEBUG
+        # print(f"next after row {vitem.rowid}")
+        update_learned(key, forward, vitem.rowid, conn)
+    count = get_count(item_cursor)
     print(f"Count: {count}")
 
 
