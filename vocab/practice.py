@@ -133,7 +133,7 @@ def show_selected(n, conn, forward, failed):
         n (int): no of itmes to show
         conn (connection): db connection
         forward (Bool): True if show source first
-        failed (bool): if True, show failed for give direction only
+        failed (bool): if True, show failed for given direction only
     """
     item_cursor = conn.cursor()
     # FIXME: need to implement fetch for failed only
