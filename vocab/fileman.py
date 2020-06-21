@@ -1,6 +1,7 @@
 # file manager for slexy
 
 import os
+import shutil
 import sqlite3
 from pathlib import Path
 
@@ -36,6 +37,17 @@ def db_connect(dbname):
     fqdbname = make_fqname(dbname, DBDIR)
     conn = sqlite3.connect(fqdbname)
     return conn
+
+
+def backup_db(dbname):
+    """backup the database
+
+    Args:
+        dbname (str): base name of database to backup
+    """
+    fqdbname = make_fqname(dbname, DBDIR)
+    dbbackup_fname = Path(fqdbname)
+    shutil.copy(fqdbname, str(dbbackup_fname) + ".bak")
 
 
 def get_fqdocname(docname):

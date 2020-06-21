@@ -1,6 +1,6 @@
 import docx
 
-from vocab.fileman import get_fqdocname, db_connect
+from vocab.fileman import get_fqdocname, db_connect, backup_db
 
 
 def get_doc(fname: str) -> docx.Document:
@@ -51,6 +51,7 @@ def store_data(data, dbname):
         data (List[5-tuples]): list of 5-tuples representing vitems
         dbname (Str): base dbname without ext or path
     """
+    backup_db(dbname)  # if storing new data, backup db before continuing
     conn = db_connect(dbname)
     c = conn.cursor()
     c.executemany("INSERT INTO vocab VALUES (?, ?, ?, ?, ?)", data)
