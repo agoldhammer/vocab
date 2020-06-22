@@ -32,16 +32,6 @@ def make_fqname(fname, fpath, new=False):
     return fqname
 
 
-def db_exists(dbname):
-    """check if db exists
-
-    Args:
-        dbname (str): base name of db w/o ext
-    """
-    fqdbname = make_fqname(dbname, DBDIR)
-    return os.path.exists(fqdbname)
-
-
 def db_connect(dbname, new=False):
     """
     connect to dbname.db if it exists
