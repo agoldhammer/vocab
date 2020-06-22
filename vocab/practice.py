@@ -125,7 +125,7 @@ def update_learned(key, forward, row, conn):
         conn.commit()
 
 
-def show_selected(n, conn, forward, failed):
+def show_selected(n, conn, forward, unlearned):
     """show n vitems from curs
     with forward/backward option
 
@@ -133,7 +133,7 @@ def show_selected(n, conn, forward, failed):
         n (int): no of itmes to show
         conn (connection): db connection
         forward (Bool): True if show source first
-        failed (bool): if True, show failed for given direction only
+        unlearned (bool): if True, show only unlearned for given direction only
     """
     item_cursor = conn.cursor()
     # FIXME: need to implement fetch for failed only

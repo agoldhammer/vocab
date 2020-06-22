@@ -1,5 +1,6 @@
-import sqlite3
 import sys
+
+from vocab.fileman import db_connect
 
 
 def create_db(name):
@@ -9,8 +10,8 @@ def create_db(name):
 
     Args:
         name (str): name of db to create, w/o extension
-    """    
-    conn = sqlite3.connect(name + ".db")
+    """
+    conn = db_connect(name, new=True)
     curs = conn.cursor()
     curs.execute(
         """CREATE TABLE vocab
