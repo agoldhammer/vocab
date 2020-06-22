@@ -3,7 +3,7 @@ import click
 from vocab.createdb import create_db
 from vocab.practice import show_selected
 from vocab.vocab import execute
-from vocab.fileman import db_connect
+from vocab.fileman import db_connect, backup_db
 
 
 @click.group()
@@ -23,6 +23,8 @@ def main():
 def practice(n, unlearned, forward, dbname):
     conn = None
     try:
+        # backup the db before modifying
+        backup_db(dbname)
         conn = db_connect(dbname)
         show_selected(n, conn, forward, unlearned)
     except Exception as e:
