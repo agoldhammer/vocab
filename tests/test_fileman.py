@@ -26,3 +26,10 @@ def test_db_connect():
     # the test db should exist
     conn = fm.db_connect("test")
     assert(conn is not None)
+
+
+def test_get_fqdocname():
+    "will fail if testdummy.docx not in VOCABDIR"
+    fqn = fm.get_fqdocname("testdummy")
+    desired = Path.home() / Path(fm.VOCABDIR) / Path("testdummy.docx")
+    assert(fqn == desired)
