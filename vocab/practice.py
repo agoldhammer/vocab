@@ -107,6 +107,23 @@ def show_vitem(vitem, forward):
     return correctp()
 
 
+def update_row(forward, row, conn):
+    """update row in database
+
+    Args:
+        forward (bool): True if forward direction
+        row (int): rowid of record to update
+        conn (sqlite.Conn): connection
+    """
+    field = "lrd_from" if forward else "lrd_to"
+    cursor = conn.cursor()
+    sql = f"UPDATE vocab SET {field} = 1 WHERE ROWID = {row}"
+    cursor.execute(sql)
+    # DEBUG
+    # print(f"updated {row}")
+    conn.commit()
+
+
 def update_learned(key, forward, row, conn):
     """update proper learned field if keypress was RIGHT
 
@@ -117,13 +134,7 @@ def update_learned(key, forward, row, conn):
         conn (db connection): connection
     """
     if key == Keypress.RIGHT:
-        cursor = conn.cursor()
-        field = "lrd_from" if forward else "lrd_to"
-        sql = f"UPDATE vocab SET {field} = 1 WHERE ROWID = {row}"
-        cursor.execute(sql)
-        # DEBUG
-        # print(f"updated {row}")
-        conn.commit()
+        update_row(forward, row, conn)
 
 
 def show_selected(n, conn, forward, unlearned):
