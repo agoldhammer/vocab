@@ -6,16 +6,9 @@ from vocab import fileman as fm
 
 
 def test_make_fqname():
-    fqn = fm.make_fqname("dummy", fm.DBDIR, True)
+    fqn = fm.make_fqname("dummy", fm.DBDIR)
     desired = Path.home() / Path(fm.DBDIR) / Path("dummy.db")
     assert(fqn == desired)
-
-    with pytest.raises(FileNotFoundError):
-        fqn = fm.make_fqname("nonexistent", fm.DBDIR)
-
-    # the test.db should exist in the program dir
-    with pytest.raises(FileExistsError):
-        fqn = fm.make_fqname("test", fm.DBDIR, new=True)
 
     # dir other than DBDIR or VOCABDIR should raise exc
     with pytest.raises(fm.FilemanError):
@@ -26,6 +19,13 @@ def test_db_connect():
     # the test db should exist
     conn = fm.db_connect("test")
     assert(conn is not None)
+
+    with pytest.raises(FileNotFoundError):
+        _ = fm.db_connect("nonexistent")
+
+    # the test.db should exist in the program dir
+    with pytest.raises(FileExistsError):
+        _ = fm.db_connect("test", create=True)
 
 
 def test_get_fqdocname():

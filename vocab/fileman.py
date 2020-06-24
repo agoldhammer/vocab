@@ -13,7 +13,7 @@ class FilemanError(Exception):
     pass
 
 
-def make_fqname(fname, fpath, new=False):
+def make_fqname(fname, fpath):
     "return fully qualified filename from basename and fpath"
     if fpath == DBDIR:
         ext = ".db"
@@ -24,20 +24,21 @@ def make_fqname(fname, fpath, new=False):
 
     fname = fname + ext
     fqname = Path.home() / Path(fpath) / Path(fname)
-    file_exists = os.path.exists(fqname)
-    if not new and not file_exists:
-        raise FileNotFoundError(f"{fqname}")
-    elif new and file_exists:
-        raise FileExistsError(f"Would clobber {fqname}")
+
     return fqname
 
 
-def db_connect(dbname, new=False):
+def db_connect(dbname, create=False):
     """
     connect to dbname.db if it exists
     and return connection
     """
-    fqdbname = make_fqname(dbname, DBDIR, new)
+    fqdbname = make_fqname(dbname, DBDIR)
+    file_exists = os.path.exists(fqdbname)
+    if not create and not file_exists:
+        raise FileNotFoundError(f"{fqdbname}")
+    elif create and file_exists:
+        raise FileExistsError(f"Would clobber {fqdbname}")
     conn = sqlite3.connect(fqdbname)
     return conn
 
