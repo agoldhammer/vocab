@@ -58,7 +58,8 @@ def get_count(curs):
     """
     qry_count = "SELECT COUNT(*) FROM vocab"
     curs.execute(qry_count)
-    return next(curs)[0]
+    count = curs.fetchone()
+    return count[0]
 
 
 def fetch_nitems(curs, n):
