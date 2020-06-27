@@ -1,7 +1,7 @@
 from collections import namedtuple
-from dataclasses import dataclass, field
+# from dataclasses import dataclass, field
 from enum import Enum
-from typing import List
+# from typing import List
 
 from getch import getch
 
@@ -13,12 +13,12 @@ class Keypress(Enum):
 
 
 # FIXME: this won't be needed if cursor modified after each item
-@dataclass
-class ToModify:
-    rows_modified: List[int] = field(default_factory=list)
+# @dataclass
+# class ToModify:
+#     rows_modified: List[int] = field(default_factory=list)
 
-    def append(self, nrow: int):
-        self.rows_modified.append(nrow)
+#     def append(self, nrow: int):
+#         self.rows_modified.append(nrow)
 
 
 Vitem = namedtuple("Vitem", ["rowid", "src", "target", "supp", "fwd", "bkwd"])
