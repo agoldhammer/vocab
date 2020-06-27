@@ -19,7 +19,7 @@ def run_gui():
         [sg.Text("", font=FONT, size=(60, 1), key="-DEF-", auto_size_text=True)],
         [sg.Text("Supp", font=FONT, key="-SUP-")],
         [sg.Button("ShowDef", key="-SHOWDEF-")],
-        [sg.Button("Right", visible=False), sg.Button("Wrong", visible=False)],
+        [sg.Button("Right", disabled=True), sg.Button("Wrong", disabled=True)],
     ]
 
     # Create the Window
@@ -32,19 +32,30 @@ def run_gui():
         ):  # if user closes window or clicks cancel
             break
         elif event == "-SHOWDEF-":
-            print("clicked showdef")
             window["-DEF-"].update(defn)
-            window["-SHOWDEF-"].update(visible=False)
-            window["Right"].update(visible=True)
-            window["Wrong"].update(visible=True)
+            window["-SHOWDEF-"].update(disabled=True)
+            window["Right"].update(disabled=False)
+            window["Wrong"].update(disabled=False)
         elif event == "Right":
-            print("clicked Right")
-            wrd, defn = next(wpairs)
+            try:
+                wrd, defn = next(wpairs)
+            except StopIteration:
+                break
             window["-WRD-"].update(wrd)
             window["-DEF-"].update("")
-            window["-SHOWDEF-"].update(visible=True)
-            window["Right"].update(visible=False)
-            window["Wrong"].update(visible=False)
+            window["-SHOWDEF-"].update(disabled=False)
+            window["Right"].update(disabled=True)
+            window["Wrong"].update(disabled=True)
+        elif event == "Wrong":
+            try:
+                wrd, defn = next(wpairs)
+            except StopIteration:
+                break
+            window["-WRD-"].update(wrd)
+            window["-DEF-"].update("")
+            window["-SHOWDEF-"].update(disabled=False)
+            window["Right"].update(disabled=True)
+            window["Wrong"].update(disabled=True)
 
     window.close()
 
