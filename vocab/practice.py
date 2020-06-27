@@ -137,6 +137,22 @@ def update_learned(key, forward, row, conn):
         update_row(forward, row, conn)
 
 
+def gather_selected(n, conn, forward, unlearned):
+    """make generator with selected items
+
+    Args:
+        n (int): num of items
+        conn (sqlite.Conn): connection
+        forward (bool): True if fwd direction
+        unlearned (bool): show unlearned only
+    """
+    item_cursor = conn.cursor()
+    # FIXME: need to implement fetch for failed only
+    vitems = fetch_nitems(item_cursor, n)
+    for vitem in vitems:
+        yield vitem
+
+
 def show_selected(n, conn, forward, unlearned):
     """show n vitems from curs
     with forward/backward option
