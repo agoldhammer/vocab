@@ -3,14 +3,14 @@ import PySimpleGUI as sg
 from vocab.practice import gather_selected
 
 
-def pairs():
-    mywords = [("Nachbar", "Neighbor"), ("Schwester", "Sister"), ("Bruder", "Brother")]
-    for word in mywords:
-        yield word
+# def pairs():
+#     mywords = [("Nachbar", "Neighbor"), ("Schwester", "Sister"), ("Bruder", "Brother")]
+#     for word in mywords:
+#         yield word
 
 
 def run_gui(vitems):
-    FONT = "Helvetica 20"
+    FONT = "Helvetica 22"
 
     sg.theme("LightBlue3")  # Add a touch of color
     # All the stuff inside your window.
@@ -60,6 +60,7 @@ def run_gui(vitems):
                 break
             window["-WRD-"].update(vitem.src)
             window["-DEF-"].update("")
+            window["-SUP-"].update("")
             window["-SHOWDEF-"].update(disabled=False)
             window["Right"].update(disabled=True)
             window["Wrong"].update(disabled=True)
