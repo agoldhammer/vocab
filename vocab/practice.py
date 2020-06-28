@@ -1,6 +1,8 @@
 from collections import namedtuple
+
 # from dataclasses import dataclass, field
 from enum import Enum
+
 # from typing import List
 
 from getch import getch
@@ -12,16 +14,11 @@ class Keypress(Enum):
     OTHER = 2
 
 
-# FIXME: this won't be needed if cursor modified after each item
-# @dataclass
-# class ToModify:
-#     rows_modified: List[int] = field(default_factory=list)
-
-#     def append(self, nrow: int):
-#         self.rows_modified.append(nrow)
-
-
-Vitem = namedtuple("Vitem", ["rowid", "src", "target", "supp", "fwd", "bkwd"])
+Vitem = namedtuple(
+    "Vitem",
+    ["rowid", "src", "target", "supp",
+     "lrd_from", "lrd_to", "nseen"]
+)
 
 
 def wait_to_show():
@@ -79,18 +76,33 @@ def fetch_nitems(curs, n):
     return map(Vitem._make, curs)
 
 
-def show_vitem(vitem, forward):
+def update_nseen(row, conn):
+    """update nseen field for currently displayed item
+
+    Args:
+        row (int): rowid to update
+        conn (sql.Conn): connection
+    """
+    qry = f"UPDATE vocab SET nseen = nseen + 1 WHERE ROWID={row}"
+    cursor = conn.cursor()
+    cursor.execute(qry)
+    conn.commit()
+
+
+def show_vitem(vitem, forward, conn):
     """display vitem
 
     Args:
         vitem (Vitem): named tuple
         forward (Bool): if True, display source first; else display target
+        conn (sqlite.Conn): connection
 
     Returns:
         Keypress.Enum: see correctp return values
     """
     src = vitem.src
     target = vitem.target
+    update_nseen(vitem.rowid, conn)
     if forward:
         print(src)
     else:
@@ -167,7 +179,7 @@ def show_selected(n, conn, forward, unlearned):
     # FIXME: need to implement fetch for failed only
     vitems = fetch_nitems(item_cursor, n)
     for vitem in vitems:
-        key = show_vitem(vitem, forward)
+        key = show_vitem(vitem, forward, conn)
         # DEBUG
         # print(f"next after row {vitem.rowid}")
         update_learned(key, forward, vitem.rowid, conn)

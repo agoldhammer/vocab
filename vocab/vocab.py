@@ -44,17 +44,19 @@ def validate_vitem(vitem):
 
 
 def store_data(data, dbname):
-    """takes a list of 5-tuples representing vitems
+    """takes a list of 6-tuples representing vitems
     and stores in db dbname
 
     Args:
-        data (List[5-tuples]): list of 5-tuples representing vitems
+        data (List[6-tuples]): list of 6-tuples representing vitems
         dbname (Str): base dbname without ext or path
+
+        data tuples: src, target, supp, lrd_from, Lrd_to, nseen
     """
     backup_db(dbname)  # if storing new data, backup db before continuing
     conn = db_connect(dbname)
     c = conn.cursor()
-    c.executemany("INSERT INTO vocab VALUES (?, ?, ?, ?, ?)", data)
+    c.executemany("INSERT INTO vocab VALUES (?, ?, ?, ?, ?, ?)", data)
     conn.commit()
     conn.close()
 
@@ -76,7 +78,7 @@ def execute(store, fname, dbname):
         status, v = validate_vitem(vitem)
         print(status, v)
         if status:
-            valid_vitems.append([v[0].strip(), v[1].strip(), v[2].strip(), 0, 0])
+            valid_vitems.append([v[0].strip(), v[1].strip(), v[2].strip(), 0, 0, 0])
         else:
             invalid_vitems.append(v)
     for vitem in valid_vitems:

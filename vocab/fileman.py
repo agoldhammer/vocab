@@ -54,6 +54,16 @@ def backup_db(dbname):
     shutil.copy(fqdbname, str(dbbackup_fname) + ".bak")
 
 
+def rm_db(dbname):
+    """remove a database file (used in testing)
+
+    Args:
+        dbname (str): base dbname
+    """
+    fqdbname = make_fqname(dbname, DBDIR)
+    os.remove(fqdbname)
+
+
 def get_fqdocname(docname):
     """
     return fully qualified doc file name

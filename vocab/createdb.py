@@ -11,12 +11,13 @@ def create_db(name):
     Args:
         name (str): name of db to create, w/o extension
     """
-    conn = db_connect(name, new=True)
+    conn = db_connect(name, create=True)
     curs = conn.cursor()
     curs.execute(
         """CREATE TABLE vocab
         (src text, target text, supp text,
-        lrd_from integer, lrd_to integer)"""
+        lrd_from integer, lrd_to integer,
+        nseen integer)"""
     )
     conn.close()
 
