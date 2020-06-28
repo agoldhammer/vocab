@@ -17,7 +17,7 @@ def test_make_fqname():
 
 def test_db_connect():
     # the test db should exist
-    conn = fm.db_connect("test")
+    conn = fm.db_connect("test1")
     assert(conn is not None)
 
     with pytest.raises(FileNotFoundError):
@@ -25,7 +25,7 @@ def test_db_connect():
 
     # the test.db should exist in the program dir
     with pytest.raises(FileExistsError):
-        _ = fm.db_connect("test", create=True)
+        _ = fm.db_connect("test1", create=True)
 
 
 def test_get_fqdocname():

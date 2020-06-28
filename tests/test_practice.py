@@ -11,7 +11,7 @@ conn = None
 @pytest.fixture()
 def setup_db():
     global conn
-    conn = db_connect("test")
+    conn = db_connect("test1")
     yield
     conn.close()
 
