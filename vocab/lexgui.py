@@ -1,24 +1,55 @@
+from dataclasses import dataclass
+from enum import Enum
+
+# import debugpy
+
 import PySimpleGUI as sg
 
 from vocab.practice import gather_selected
 
+# global display parameters
+FONT = "Helvetica 22"
+sg.theme("LightBlue3")  # Add a touch of color
 
-# def pairs():
-#     mywords = [("Nachbar", "Neighbor"), ("Schwester", "Sister"), ("Bruder", "Brother")]
-#     for word in mywords:
-#         yield word
+
+@dataclass
+class UpdateVector:
+    word: str
+    defn: str
+    supp: str
+    show_btn: bool
+    right_btn: bool
+    wrong_btn: bool
+
+
+# state machine for display
+# states
+# -- NOTHING_DISPLAYED
+# -- DEF_SHOWING
+# -- INPUTS: SHOW, DIRN, RIGHT/WRONG + vitem
+
+
+class STATES(Enum):
+    NOTHING_DISPLAYED = 0
+    DEF_SHOWING = 1
+    WORD_DISPLAYED = 2
+
+
+def window_update(window, upd_vec):
+    window["-WRD-"].update(upd_vec.word)
+    window["-DEF-"].update(upd_vec.defn)
+    window["-SUP-"].update(upd_vec.supp)
+    window["-SHOWDEF-"].update(disabled=upd_vec.show_btn)
+    window["Right"].update(disabled=upd_vec.right_btn)
+    window["Wrong"].update(disabled=upd_vec.wrong_btn)
 
 
 def run_gui(vitems):
-    FONT = "Helvetica 22"
-
-    sg.theme("LightBlue3")  # Add a touch of color
     # All the stuff inside your window.
-    # wpairs = pairs()
-    # wrd, defn = next(wpairs)
-    vitem = next(vitems)
+    state = STATES.NOTHING_DISPLAYED
+    # vitem = next(vitems)
     layout = [
-        [sg.Text(vitem.src, font=FONT, key="-WRD-", size=(60, 1))],
+        [sg.Text("start", font=FONT, key="-WRD-", size=(60, 1))],
         [sg.Text("", font=FONT, size=(60, 1), key="-DEF-", auto_size_text=True)],
         [sg.Text("", font=FONT, size=(60, 3), key="-SUP-")],
         [sg.Button("ShowDef", key="-SHOWDEF-")],
@@ -28,49 +59,44 @@ def run_gui(vitems):
     # Create the Window
     window = sg.Window("slexy Language Practice App", layout)
     # Event Loop to process "events" and get the "values" of the inputs
-    while True:
-        event, values = window.read()
-        if (
-            event == sg.WIN_CLOSED or event == "Exit"
-        ):  # if user closes window or clicks cancel
-            break
-        elif event == "-SHOWDEF-":
-            window["-DEF-"].update(vitem.target)
-            window["-SHOWDEF-"].update(disabled=True)
-            window["-SUP-"].update(vitem.supp)
-            window["Right"].update(disabled=False)
-            window["Wrong"].update(disabled=False)
-        elif event == "Right":
-            try:
-                # wrd, defn = next(wpairs)
-                vitem = next(vitems)
-            except StopIteration:
+    for vitem in vitems:
+        processing_word = True
+        while(processing_word):
+            print(vitem.src)
+            event, values = window.read()
+            if event == sg.WIN_CLOSED or event == "Exit":
+                # if user closes window or clicks cancel
                 break
-            window["-WRD-"].update(vitem.src)
-            window["-DEF-"].update("")
-            window["-SUP-"].update("")
-            window["-SHOWDEF-"].update(disabled=False)
-            window["Right"].update(disabled=True)
-            window["Wrong"].update(disabled=True)
-        elif event == "Wrong":
-            try:
-                # wrd, defn = next(wpairs)
-                vitem = next(vitems)
-            except StopIteration:
-                break
-            window["-WRD-"].update(vitem.src)
-            window["-DEF-"].update("")
-            window["-SUP-"].update("")
-            window["-SHOWDEF-"].update(disabled=False)
-            window["Right"].update(disabled=True)
-            window["Wrong"].update(disabled=True)
-
+            elif state == STATES.NOTHING_DISPLAYED:
+                print("nd")
+                upd_vec = UpdateVector(vitem.src, "", "", False, True, True)
+                window_update(window, upd_vec)
+                state = STATES.WORD_DISPLAYED
+                continue
+            elif state == STATES.WORD_DISPLAYED and event == "-SHOWDEF-":
+                print("show")
+                upd_vec = UpdateVector(vitem.src, vitem.target, vitem.supp, True, False, False)
+                window_update(window, upd_vec)
+                state = STATES.DEF_SHOWING
+                continue
+            elif event == "Right":
+                upd_vec = UpdateVector("", "", "", False, True, True)
+                window_update(window, upd_vec)
+                state = STATES.NOTHING_DISPLAYED
+                processing_word = False
+            elif event == "Wrong":
+                upd_vec = UpdateVector("", "", "", False, True, True)
+                window_update(window, upd_vec)
+                state = STATES.NOTHING_DISPLAYED
+                processing_word = False
     window.close()
-
-
-# run_gui()
 
 
 def gui_conn(n, conn, forward, unlearned):
     vitems = gather_selected(n, conn, forward, unlearned)
+    # debugpy.listen(5678)
+    # print("Waiting for debugger attach")
+    # debugpy.wait_for_client()
+    # debugpy.breakpoint()
+    # print('break on this line')
     run_gui(vitems)
