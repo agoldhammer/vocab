@@ -51,7 +51,7 @@ def run_gui(vitems):
         [sg.Text(vitem.src, font=FONT, key="-WRD-", size=(60, 1))],
         [sg.Text("", font=FONT, size=(60, 1), key="-DEF-", auto_size_text=True)],
         [sg.Text("", font=FONT, size=(60, 3), key="-SUP-")],
-        [sg.Button("ShowDef", key="-SHOWDEF-")],
+        [sg.Button("ShowDef", key="-SHOWDEF-"), sg.Button("DEBUG")],
         [sg.Button("Right", disabled=True), sg.Button("Wrong", disabled=True)],
     ]
 
@@ -84,6 +84,8 @@ def run_gui(vitems):
                 break
             upd_vec = UpdateVector(vitem.src, "", "", False, True, True)
             window_update(window, upd_vec)
+        elif event == "DEBUG":
+            sg.show_debugger_window()
         elif event == sg.WIN_CLOSED or event == "Exit":
             # if user closes window or clicks cancel
             break
