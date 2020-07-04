@@ -46,7 +46,6 @@ def window_update(window, upd_vec):
 
 def run_gui(vitems):
     # All the stuff inside your window.
-    state = STATES.NOTHING_DISPLAYED
     vitem = next(vitems)
     layout = [
         [sg.Text(vitem.src, font=FONT, key="-WRD-", size=(60, 1))],
@@ -58,37 +57,36 @@ def run_gui(vitems):
 
     # Create the Window
     window = sg.Window("slexy Language Practice App", layout)
+    state = STATES.WORD_DISPLAYED
     # Event Loop to process "events" and get the "values" of the inputs
     while(True):
         print("src", vitem.src)
         event, values = window.read()
-        print("after read: ", state, event, values)
+        print(f"after read: s {state}, e {event}, v {values}")
 
         if state == STATES.NOTHING_DISPLAYED:
             print("nd")
             upd_vec = UpdateVector(vitem.src, "", "", False, True, True)
             window_update(window, upd_vec)
             state = STATES.WORD_DISPLAYED
-        elif state == STATES.WORD_DISPLAYED and event == "-SHOWDEF-":
+        elif event == "-SHOWDEF-":
             print("show")
             upd_vec = UpdateVector(vitem.src, vitem.target, vitem.supp, True, False, False)
             window_update(window, upd_vec)
             state = STATES.DEF_SHOWING
-        elif state == STATES.DEF_SHOWING and (event == "Right" or event == "Wrong"):
+        elif event == "Right" or event == "Wrong":
             print("r/w")
-            # upd_vec = UpdateVector("", "", "", False, True, True)
-            # window_update(window, upd_vec)
-            state = STATES.NOTHING_DISPLAYED
+            state = STATES.WORD_DISPLAYED
             try:
                 vitem = next(vitems)
             except StopIteration:
                 print("stop")
                 break
+            upd_vec = UpdateVector(vitem.src, "", "", False, True, True)
+            window_update(window, upd_vec)
         elif event == sg.WIN_CLOSED or event == "Exit":
             # if user closes window or clicks cancel
             break
-        else:
-            print("shouldn't happen")
     window.close()
 
 
