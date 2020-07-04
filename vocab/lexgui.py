@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
 
-# import debugpy
-
 import PySimpleGUI as sg
 
 from vocab.practice import gather_selected
@@ -59,7 +57,7 @@ def run_gui(vitems):
     window = sg.Window("slexy Language Practice App", layout)
     state = STATES.WORD_DISPLAYED
     # Event Loop to process "events" and get the "values" of the inputs
-    while(True):
+    while True:
         # print("src", vitem.src)
         event, values = window.read(timeout=200)
         # print(f"after read: s {state}, e {event}, v {values}")
@@ -71,7 +69,9 @@ def run_gui(vitems):
             state = STATES.WORD_DISPLAYED
         elif event == "-SHOWDEF-":
             # print("show")
-            upd_vec = UpdateVector(vitem.src, vitem.target, vitem.supp, True, False, False)
+            upd_vec = UpdateVector(
+                vitem.src, vitem.target, vitem.supp, True, False, False
+            )
             window_update(window, upd_vec)
             state = STATES.DEF_SHOWING
         elif event == "Right" or event == "Wrong":
