@@ -47,9 +47,9 @@ def window_update(window, upd_vec):
 def run_gui(vitems):
     # All the stuff inside your window.
     state = STATES.NOTHING_DISPLAYED
-    # vitem = next(vitems)
+    vitem = next(vitems)
     layout = [
-        [sg.Text("start", font=FONT, key="-WRD-", size=(60, 1))],
+        [sg.Text(vitem.src, font=FONT, key="-WRD-", size=(60, 1))],
         [sg.Text("", font=FONT, size=(60, 1), key="-DEF-", auto_size_text=True)],
         [sg.Text("", font=FONT, size=(60, 3), key="-SUP-")],
         [sg.Button("ShowDef", key="-SHOWDEF-")],
@@ -59,36 +59,36 @@ def run_gui(vitems):
     # Create the Window
     window = sg.Window("slexy Language Practice App", layout)
     # Event Loop to process "events" and get the "values" of the inputs
-    for vitem in vitems:
-        processing_word = True
-        while(processing_word):
-            print(vitem.src)
-            event, values = window.read()
-            if event == sg.WIN_CLOSED or event == "Exit":
-                # if user closes window or clicks cancel
+    while(True):
+        print("src", vitem.src)
+        event, values = window.read()
+        print("after read: ", state, event, values)
+
+        if state == STATES.NOTHING_DISPLAYED:
+            print("nd")
+            upd_vec = UpdateVector(vitem.src, "", "", False, True, True)
+            window_update(window, upd_vec)
+            state = STATES.WORD_DISPLAYED
+        elif state == STATES.WORD_DISPLAYED and event == "-SHOWDEF-":
+            print("show")
+            upd_vec = UpdateVector(vitem.src, vitem.target, vitem.supp, True, False, False)
+            window_update(window, upd_vec)
+            state = STATES.DEF_SHOWING
+        elif state == STATES.DEF_SHOWING and (event == "Right" or event == "Wrong"):
+            print("r/w")
+            # upd_vec = UpdateVector("", "", "", False, True, True)
+            # window_update(window, upd_vec)
+            state = STATES.NOTHING_DISPLAYED
+            try:
+                vitem = next(vitems)
+            except StopIteration:
+                print("stop")
                 break
-            elif state == STATES.NOTHING_DISPLAYED:
-                print("nd")
-                upd_vec = UpdateVector(vitem.src, "", "", False, True, True)
-                window_update(window, upd_vec)
-                state = STATES.WORD_DISPLAYED
-                continue
-            elif state == STATES.WORD_DISPLAYED and event == "-SHOWDEF-":
-                print("show")
-                upd_vec = UpdateVector(vitem.src, vitem.target, vitem.supp, True, False, False)
-                window_update(window, upd_vec)
-                state = STATES.DEF_SHOWING
-                continue
-            elif event == "Right":
-                upd_vec = UpdateVector("", "", "", False, True, True)
-                window_update(window, upd_vec)
-                state = STATES.NOTHING_DISPLAYED
-                processing_word = False
-            elif event == "Wrong":
-                upd_vec = UpdateVector("", "", "", False, True, True)
-                window_update(window, upd_vec)
-                state = STATES.NOTHING_DISPLAYED
-                processing_word = False
+        elif event == sg.WIN_CLOSED or event == "Exit":
+            # if user closes window or clicks cancel
+            break
+        else:
+            print("shouldn't happen")
     window.close()
 
 
