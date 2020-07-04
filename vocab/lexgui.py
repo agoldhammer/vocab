@@ -61,7 +61,7 @@ def run_gui(vitems):
     # Event Loop to process "events" and get the "values" of the inputs
     while(True):
         # print("src", vitem.src)
-        event, values = window.read()
+        event, values = window.read(timeout=200)
         # print(f"after read: s {state}, e {event}, v {values}")
 
         if state == STATES.NOTHING_DISPLAYED:

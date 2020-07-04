@@ -2,7 +2,7 @@ import click
 
 from vocab.createdb import create_db
 from vocab.practice import show_selected
-from vocab.vocab import execute
+from vocab.vocabu import execute
 from vocab.fileman import db_connect, backup_db
 from vocab.lexgui import gui_conn
 
