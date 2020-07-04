@@ -60,27 +60,27 @@ def run_gui(vitems):
     state = STATES.WORD_DISPLAYED
     # Event Loop to process "events" and get the "values" of the inputs
     while(True):
-        print("src", vitem.src)
+        # print("src", vitem.src)
         event, values = window.read()
-        print(f"after read: s {state}, e {event}, v {values}")
+        # print(f"after read: s {state}, e {event}, v {values}")
 
         if state == STATES.NOTHING_DISPLAYED:
-            print("nd")
+            # print("nd")
             upd_vec = UpdateVector(vitem.src, "", "", False, True, True)
             window_update(window, upd_vec)
             state = STATES.WORD_DISPLAYED
         elif event == "-SHOWDEF-":
-            print("show")
+            # print("show")
             upd_vec = UpdateVector(vitem.src, vitem.target, vitem.supp, True, False, False)
             window_update(window, upd_vec)
             state = STATES.DEF_SHOWING
         elif event == "Right" or event == "Wrong":
-            print("r/w")
+            # print("r/w")
             state = STATES.WORD_DISPLAYED
             try:
                 vitem = next(vitems)
             except StopIteration:
-                print("stop")
+                # print("stop")
                 break
             upd_vec = UpdateVector(vitem.src, "", "", False, True, True)
             window_update(window, upd_vec)
