@@ -64,7 +64,7 @@ def run_gui(vitems):
     window = None
     state = STATES.INIT
     for vitem in vitems:
-        print("src", vitem.src)
+        # print("src", vitem.src)
         if state == STATES.INIT:
             window = init_window(vitem)
             state = STATES.WORD_DISPLAYED
@@ -76,7 +76,7 @@ def run_gui(vitems):
                 state = STATES.WORD_DISPLAYED
         event, values = window.read(timeout=500)  # use timeout version for debug btn
         # event, values = window.read()
-        print(f"after read: s {state}, e {event}, v {values}")
+        # print(f"after read: s {state}, e {event}, v {values}")
 
         while(state != STATES.NEW_WORD):
             if event == "-SHOWDEF-":
