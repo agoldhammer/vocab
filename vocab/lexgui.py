@@ -70,7 +70,7 @@ def run_gui(vitems):
             state = STATES.WORD_DISPLAYED
         else:
             if state == STATES.NEW_WORD:
-                print("new word")
+                # print("new word")
                 upd_vec = UpdateVector(vitem.src, "", "", False, True, True)
                 window_update(window, upd_vec)
                 state = STATES.WORD_DISPLAYED
@@ -80,7 +80,7 @@ def run_gui(vitems):
 
         while(state != STATES.NEW_WORD):
             if event == "-SHOWDEF-":
-                print("show")
+                # print("show")
                 upd_vec = UpdateVector(vitem.src, vitem.target, vitem.supp, True, False, False)
                 window_update(window, upd_vec)
                 state = STATES.DEF_SHOWING
@@ -92,7 +92,7 @@ def run_gui(vitems):
                 sg.show_debugger_window()
             elif event == sg.WIN_CLOSED or event == "Exit":
                 # if user closes window or clicks cancel
-                break
+                raise Exception("User Exit")
             event, values = window.read()
     window.close()
 
