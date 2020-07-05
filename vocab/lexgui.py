@@ -68,7 +68,7 @@ def run_gui(vitems, conn, forward):
     window = None
     state = STATES.INIT
     for vitem in vitems:
-        print("src", vitem.src)
+        # print("src", vitem.src)
         if state == STATES.INIT:
             window = init_window(vitem, forward)
             state = STATES.WORD_DISPLAYED
@@ -80,16 +80,16 @@ def run_gui(vitems, conn, forward):
                 state = STATES.WORD_DISPLAYED
         event, values = window.read(timeout=500)  # use timeout version for debug btn
         # event, values = window.read()
-        print(f"after read: s {state}, e {event}, v {values}")
+        # print(f"after read: s {state}, e {event}, v {values}")
 
         while(state != STATES.NEW_WORD):
             if event == "-SHOWDEF-":
-                print("show")
+                # print("show")
                 # upd_vec = UpdateVector(vitem.src, vitem.target, vitem.supp, vitem.nseen, True, False, False)
                 window_update(window, vitem, forward, state)
                 state = STATES.DEF_SHOWING
             elif event == "Right" or event == "Wrong":
-                print("r/w")
+                # print("r/w")
                 state = STATES.NEW_WORD
                 break
             elif event == "DEBUG":
