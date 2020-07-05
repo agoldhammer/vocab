@@ -24,11 +24,6 @@ class UpdateVector:
 
 # state machine for display
 # states
-# -- NOTHING_DISPLAYED
-# -- DEF_SHOWING
-# -- INPUTS: SHOW, DIRN, RIGHT/WRONG + vitem
-
-
 class STATES(Enum):
     INIT = -1
     NEW_WORD = 0
@@ -95,7 +90,7 @@ def run_gui(vitems):
             elif event == "DEBUG":
                 sg.show_debugger_window()
             elif event == sg.WIN_CLOSED or event == "Exit":
-                # if user closes window or clicks cancel
+                # if user closes window or clicks cancel, throws back to cli
                 raise Exception("User Exit")
             event, values = window.read()
     window.close()
