@@ -2,7 +2,7 @@ from enum import Enum
 
 import PySimpleGUI as sg
 
-from vocab.practice import gather_selected
+from vocab.practice import gather_selected, update_row, update_nseen
 
 # global display parameters
 FONT = "Helvetica 22"
@@ -22,7 +22,13 @@ class STATES(Enum):
 def window_update(window, vitem, forward, state):
     word = vitem.src if forward else vitem.target
     defn = vitem.target if forward else vitem.src
+    should_color1 = (forward and vitem.lrd_from)
+    should_color2 = ((not forward) and vitem.lrd_to)
     window["-WRD-"].update(word)
+    if should_color1 or should_color2:
+        window["-WRD-"].update(text_color="green")
+    else:
+        window["-WRD-"].update(text_color="black")
     if state == STATES.NEW_WORD:
         supp = ""
         defn = ""
@@ -69,6 +75,7 @@ def run_gui(vitems, conn, forward):
     state = STATES.INIT
     for vitem in vitems:
         # print("src", vitem.src)
+        update_nseen(vitem.rowid, conn)
         if state == STATES.INIT:
             window = init_window(vitem, forward)
             state = STATES.WORD_DISPLAYED
@@ -90,6 +97,8 @@ def run_gui(vitems, conn, forward):
                 state = STATES.DEF_SHOWING
             elif event == "Right" or event == "Wrong":
                 # print("r/w")
+                if event == "Right":
+                    update_row(forward, vitem.rowid, conn)
                 state = STATES.NEW_WORD
                 break
             elif event == "DEBUG":
