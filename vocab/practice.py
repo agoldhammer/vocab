@@ -59,18 +59,25 @@ def get_count(curs):
     return count[0]
 
 
-def fetch_nitems(curs, n):
-    """fetch n items from the db
+def fetch_nitems(curs, n, forward, unlearned):
+    """fetch n (or fewer) items from the db
 
     Args:
         curs (db cursort): sql cursor
         n (int): number of items to fetch
+        forward (bool): true if forward direction
+        unlearned (bool): unlearned only
 
     Returns:
         list[Vitems]: list of Vitem namedtuples, incl rowid
     """
+    selector = "lrd_from" if forward else "lrd_to"
+    if unlearned:
+        where_clause = f"WHERE {selector} = 0"
+    else:
+        where_clause = ""
     qry_nitems = f"""
-               SELECT rowid, * FROM vocab
+               SELECT rowid, * FROM vocab {where_clause}
                ORDER BY RANDOM() LIMIT {n}"""
     curs.execute(qry_nitems)
     return map(Vitem._make, curs)
@@ -160,7 +167,7 @@ def gather_selected(n, conn, forward, unlearned):
     """
     item_cursor = conn.cursor()
     # FIXME: need to implement fetch for failed only
-    vitems = fetch_nitems(item_cursor, n)
+    vitems = fetch_nitems(item_cursor, n, forward, unlearned)
     for vitem in vitems:
         yield vitem
 
