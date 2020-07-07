@@ -20,6 +20,14 @@ class STATES(Enum):
 
 
 def window_update(window, vitem, forward, state):
+    """[summary]
+
+    Args:
+        window (sg.Window): the window
+        vitem (Vitem): represents database row
+        forward (bool): true if fwd dirn
+        state (STATES): window state machine state
+    """
     word = vitem.src if forward else vitem.target
     defn = vitem.target if forward else vitem.src
     should_color1 = (forward and vitem.lrd_from)
@@ -53,6 +61,15 @@ def window_update(window, vitem, forward, state):
 
 
 def init_window(vitem, forward):
+    """[summary]
+
+    Args:
+        vitem (Vitem): first vitem to display
+        forward (bool): directional flag
+
+    Returns:
+        sg.Window: the initialized window
+    """
     # All the stuff inside your window.
     word = vitem.src if forward else vitem.target
     layout = [
@@ -71,6 +88,16 @@ def init_window(vitem, forward):
 
 
 def run_gui(vitems, conn, forward):
+    """display vitems in gui
+
+    Args:
+        vitems (generator yielding Vitems): the selected vitems
+        conn (sqllite.Conn): connection to db
+        forward (bool): direction flag
+
+    Raises:
+        Exception: exception thrown if user presses exit btn
+    """
     window = None
     state = STATES.INIT
     for vitem in vitems:
@@ -111,5 +138,13 @@ def run_gui(vitems, conn, forward):
 
 
 def gui_conn(n, conn, forward, unlearned):
+    """connects cli to gui
+
+    Args:
+        n (int): number of items to display
+        conn (sqlite.Conn): db connectiion
+        forward (bool): direction flag
+        unlearned (bool): display unlearned only flag
+    """
     vitems = gather_selected(n, conn, forward, unlearned)
     run_gui(vitems, conn, forward)
