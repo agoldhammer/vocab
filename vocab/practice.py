@@ -184,7 +184,7 @@ def show_selected(n, conn, forward, unlearned):
     """
     item_cursor = conn.cursor()
     # FIXME: need to implement fetch for failed only
-    vitems = fetch_nitems(item_cursor, n)
+    vitems = fetch_nitems(item_cursor, n, forward, unlearned)
     for vitem in vitems:
         key = show_vitem(vitem, forward, conn)
         # DEBUG
