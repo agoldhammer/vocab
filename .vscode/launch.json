@@ -9,8 +9,7 @@
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "console": "integratedTerminal",
-            "args": "practice -n 10 --gui test1"
-        }
+            "console": "integratedTerminal"
+        },
     ]
 }
