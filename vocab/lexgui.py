@@ -32,6 +32,7 @@ def window_update(window, vitem, forward, state):
     defn = vitem.target if forward else vitem.src
     should_color1 = (forward and vitem.lrd_from)
     should_color2 = ((not forward) and vitem.lrd_to)
+    supp = dis_def = dis_rw = None
     window["-WRD-"].update(word)
     if should_color1 or should_color2:
         window["-WRD-"].update(text_color="green")
