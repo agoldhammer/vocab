@@ -1,4 +1,5 @@
 from enum import Enum
+from webbrowser import open
 
 import PySimpleGUI as sg
 from pyperclip import copy
@@ -9,6 +10,7 @@ from vocab.practice import gather_selected, update_nseen, update_row
 FONT = "Helvetica 22"
 SMALL_FONT = "Helvetica 11"
 sg.theme("LightBlue3")  # Add a touch of color
+DICTCC_URL = "https://www.dict.cc/?s="
 
 
 # state machine for display
@@ -79,7 +81,8 @@ def init_window(vitem, forward):
         [sg.Text(f"Times seen: {vitem.nseen}", font=SMALL_FONT, key="-NSEEN-", size=(20, 1))],
         [sg.Text("", font=FONT, size=(60, 1), key="-DEF-", auto_size_text=True)],
         [sg.Text("", font=FONT, size=(60, 3), key="-SUP-")],
-        [sg.Button("ShowDef", key="-SHOWDEF-"), sg.Button("ToClipbrd", key="-CLIP-"), sg.Button("DEBUG")],
+        [sg.Button("ShowDef", key="-SHOWDEF-"),
+         sg.Button("DictCC", key="-DICTCC-"), sg.Button("ToClipbrd", key="-CLIP-"), sg.Button("DEBUG")],
         [sg.Button("Right", disabled=True), sg.Button("Wrong", disabled=True)],
     ]
 
@@ -119,6 +122,7 @@ def run_gui(vitems, conn, forward):
         # print(f"after read: s {state}, e {event}, v {values}")
 
         while(state != STATES.NEW_WORD):
+            word = vitem.src if forward else vitem.target
             if event == "-SHOWDEF-":
                 # print("show")
                 # upd_vec = UpdateVector(vitem.src, vitem.target, vitem.supp, vitem.nseen, True, False, False)
@@ -132,8 +136,10 @@ def run_gui(vitems, conn, forward):
                 break
             elif event == "DEBUG":
                 sg.show_debugger_window()
+            elif event == "-DICTCC-":
+                copy(word)
+                open(DICTCC_URL + word)
             elif event == "-CLIP-":
-                word = vitem.src if forward else vitem.target
                 copy(word)
             elif event == sg.WIN_CLOSED or event == "Exit":
                 # if user closes window or clicks cancel, throws back to cli
