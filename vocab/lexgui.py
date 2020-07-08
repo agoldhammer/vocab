@@ -1,8 +1,9 @@
 from enum import Enum
 
 import PySimpleGUI as sg
+from pyperclip import copy
 
-from vocab.practice import gather_selected, update_row, update_nseen
+from vocab.practice import gather_selected, update_nseen, update_row
 
 # global display parameters
 FONT = "Helvetica 22"
@@ -78,7 +79,7 @@ def init_window(vitem, forward):
         [sg.Text(f"Times seen: {vitem.nseen}", font=SMALL_FONT, key="-NSEEN-", size=(20, 1))],
         [sg.Text("", font=FONT, size=(60, 1), key="-DEF-", auto_size_text=True)],
         [sg.Text("", font=FONT, size=(60, 3), key="-SUP-")],
-        [sg.Button("ShowDef", key="-SHOWDEF-"), sg.Button("DEBUG")],
+        [sg.Button("ShowDef", key="-SHOWDEF-"), sg.Button("ToClipbrd", key="-CLIP-"), sg.Button("DEBUG")],
         [sg.Button("Right", disabled=True), sg.Button("Wrong", disabled=True)],
     ]
 
@@ -131,6 +132,9 @@ def run_gui(vitems, conn, forward):
                 break
             elif event == "DEBUG":
                 sg.show_debugger_window()
+            elif event == "-CLIP-":
+                word = vitem.src if forward else vitem.target
+                copy(word)
             elif event == sg.WIN_CLOSED or event == "Exit":
                 # if user closes window or clicks cancel, throws back to cli
                 raise Exception("User Exit")
