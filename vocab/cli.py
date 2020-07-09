@@ -4,7 +4,7 @@ from vocab.createdb import create_db
 from vocab.practice import show_selected
 from vocab.vocabu import execute
 from vocab.fileman import db_connect, backup_db
-from vocab.lexgui import gui_conn
+from vocab.lexgui import gui_conn, ExitException
 
 
 @click.group()
@@ -36,7 +36,7 @@ def practice(n, unlearned, forward, dbname, nogui):
             show_selected(n, conn, forward, unlearned)
         else:
             gui_conn(n, conn, forward, unlearned)
-    except Exception as e:
+    except ExitException as e:
         print(e)
     finally:
         if conn:

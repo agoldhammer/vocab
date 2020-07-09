@@ -22,6 +22,11 @@ class STATES(Enum):
     WORD_DISPLAYED = 2
 
 
+# exception for normal exit
+class ExitException(Exception):
+    pass
+
+
 def window_update(window, vitem, forward, state):
     """[summary]
 
@@ -143,9 +148,12 @@ def run_gui(vitems, conn, forward):
                 copy(word)
             elif event == sg.WIN_CLOSED or event == "Exit":
                 # if user closes window or clicks cancel, throws back to cli
-                raise Exception("User Exit")
+                raise ExitException("User Exit")
             event, values = window.read()
-    window.close()
+    if window is not None:
+        window.close()
+    else:
+        raise ExitException("Selection is empty or all learned")
 
 
 def gui_conn(n, conn, forward, unlearned):
