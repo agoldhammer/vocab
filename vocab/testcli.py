@@ -7,7 +7,7 @@ def startup():
     print("running startup")
     copy("testcli running")
     runner = CliRunner()
-    _ = runner.invoke(main, ["practice", "--gui", "test1"])
+    _ = runner.invoke(main, ["practice", "--gui", "--all", "test1"])
 
 
 if __name__ == "__main__":

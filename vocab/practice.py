@@ -48,7 +48,7 @@ def get_count(conn):
     """count items in the db
 
     Args:
-        curs (dbcursor): sql cursor
+        conn (Connection): sql connection
 
     Returns:
         int: number of items in db

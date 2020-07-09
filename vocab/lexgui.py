@@ -4,7 +4,7 @@ from webbrowser import open
 import PySimpleGUI as sg
 from pyperclip import copy
 
-from vocab.practice import gather_selected, update_nseen, update_row
+from vocab.practice import gather_selected, update_nseen, update_row, get_count
 
 # global display parameters
 FONT = "Helvetica 22"
@@ -69,19 +69,26 @@ def window_update(window, vitem, forward, state):
     window["Wrong"].update(disabled=dis_rw)
 
 
-def init_window(vitem, forward):
+def init_window(vitem, forward, total, nfrom, nto):
     """[summary]
 
     Args:
         vitem (Vitem): first vitem to display
         forward (bool): directional flag
+        total (int): total items in db
+        nfrom (int): total items learned in fwd dir
+        nto (int): total items learned in bkwd dir
 
     Returns:
         sg.Window: the initialized window
     """
     # All the stuff inside your window.
     word = vitem.src if forward else vitem.target
+
     layout = [
+        [sg.Text(f"Total {total}", font=SMALL_FONT, size=(20, 1)),
+         sg.Text(f"Learned Src {nfrom}", font=SMALL_FONT, size=(20, 1)),
+         sg.Text(f"Learned Target {nto}", font=SMALL_FONT, size=(20, 1))],
         [sg.Text(word, font=FONT, key="-WRD-", size=(60, 1))],
         [sg.Text(f"Times seen: {vitem.nseen}", font=SMALL_FONT, key="-NSEEN-", size=(20, 1))],
         [sg.Text("", font=FONT, size=(60, 1), key="-DEF-", auto_size_text=True)],
@@ -114,7 +121,8 @@ def run_gui(vitems, conn, forward):
         # print("src", vitem.src)
         update_nseen(vitem.rowid, conn)
         if state == STATES.INIT:
-            window = init_window(vitem, forward)
+            total, nfrom, nto = get_count(conn)
+            window = init_window(vitem, forward, total, nfrom, nto)
             state = STATES.WORD_DISPLAYED
         else:
             if state == STATES.NEW_WORD:
