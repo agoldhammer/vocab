@@ -44,7 +44,7 @@ def correctp():
         print("Must press r or w")
 
 
-def get_count(curs):
+def get_count(conn):
     """count items in the db
 
     Args:
@@ -54,9 +54,16 @@ def get_count(curs):
         int: number of items in db
     """
     qry_count = "SELECT COUNT(*) FROM vocab"
+    qry_from = " where lrd_from = 1"
+    qry_to = " where lrd_to = 1"
+    curs = conn.cursor()
     curs.execute(qry_count)
-    count = curs.fetchone()
-    return count[0]
+    total = curs.fetchone()[0]
+    curs.execute(qry_count + qry_from)
+    nfrom = curs.fetchone()[0]
+    curs.execute(qry_count + qry_to)
+    nto = curs.fetchone()[0]
+    return total, nfrom, nto
 
 
 def fetch_nitems(curs, n, forward, unlearned):
@@ -190,8 +197,8 @@ def show_selected(n, conn, forward, unlearned):
         # DEBUG
         # print(f"next after row {vitem.rowid}")
         update_learned(key, forward, vitem.rowid, conn)
-    count = get_count(item_cursor)
-    print(f"Count: {count}")
+    count = get_count(conn)
+    print(f"Count (total, learned_from, learned_to): {count}")
 
 
 if __name__ == "__main__":
