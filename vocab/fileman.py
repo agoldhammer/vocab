@@ -1,12 +1,18 @@
 # file manager for slexy
-
+from configparser import ConfigParser
 import os
 import shutil
 import sqlite3
 from pathlib import Path
 
-DBDIR = "Prog/vocab/vocab"
-VOCABDIR = "Google Drive/Vocabulary"
+# DBDIR = "Prog/vocab/vocab"
+# VOCABDIR = "Google Drive/Vocabulary"
+
+config = ConfigParser()
+config.read(Path.home() / ".vocab/vocab.ini")
+dirs = config["Dirs"]
+DBDIR = dirs["dbdir"]
+VOCABDIR = dirs["vocabdir"]
 
 
 class FilemanError(Exception):
