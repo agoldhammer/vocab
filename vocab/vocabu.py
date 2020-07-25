@@ -1,6 +1,10 @@
 import docx
 
-from vocab.fileman import get_fqdocname, db_connect, backup_db
+from vocab.fileman import (get_fqdocname,
+                           db_connect,
+                           backup_db,
+                           db_exists)
+from vocab.createdb import create_db
 
 
 def get_doc(fname: str) -> docx.Document:
@@ -53,8 +57,13 @@ def store_data(data, dbname):
 
         data tuples: src, target, supp, lrd_from, Lrd_to, nseen
     """
-    backup_db(dbname)  # if storing new data, backup db before continuing
-    conn = db_connect(dbname)
+    _, dbexists = db_exists(dbname)
+    if dbexists:
+        backup_db(dbname)  # if storing new data, backup db before continuing
+        conn = db_connect(dbname)
+    else:
+        create_db(dbname)
+        conn = db_connect(dbname)
     c = conn.cursor()
     c.executemany("INSERT INTO vocab VALUES (?, ?, ?, ?, ?, ?)", data)
     conn.commit()

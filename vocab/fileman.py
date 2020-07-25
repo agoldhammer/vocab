@@ -34,13 +34,17 @@ def make_fqname(fname, fpath):
     return fqname
 
 
+def db_exists(dbname):
+    fqdbname = make_fqname(dbname, DBDIR)
+    return fqdbname, os.path.exists(fqdbname)
+
+
 def db_connect(dbname, create=False):
     """
     connect to dbname.db if it exists
     and return connection
     """
-    fqdbname = make_fqname(dbname, DBDIR)
-    file_exists = os.path.exists(fqdbname)
+    fqdbname, file_exists = db_exists(dbname)
     if not create and not file_exists:
         raise FileNotFoundError(f"{fqdbname}")
     elif create and file_exists:

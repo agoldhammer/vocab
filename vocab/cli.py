@@ -45,7 +45,8 @@ def practice(n, unlearned, forward, dbname, nogui):
 
 
 @main.command()
-@click.option("--store/--nostore", default=False, help="store/nostore in detabase")
+@click.option("--store/--nostore", default=False,
+              help="store/nostore in detabase, creating if necessary")
 @click.argument("fname")
 @click.argument("dbname")
 def addvocab(store, fname, dbname):
