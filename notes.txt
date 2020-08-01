@@ -4,3 +4,9 @@ slexy practice -n 57 german
 
 vocabulary in .docx files formatted thus:
 gut: good: explanatory stuff if desired
+
+Notes on server
+/files : retrieves file list
+/seldb/<dbname> : sets active db
+/getcount : retrieves counts as a dic of 3 items
+/getslugs : retrieves ndesired slugs
