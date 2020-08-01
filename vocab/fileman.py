@@ -79,3 +79,14 @@ def get_fqdocname(docname):
     return fully qualified doc file name
     """
     return make_fqname(docname, VOCABDIR)
+
+
+def get_all_dbs(lang):
+    """list all dbs for specified language
+
+    Args:
+        lang (string): 'german' or 'italian'
+    """
+    pattern = Path.home() / Path(DBDIR)
+    paths = pattern.glob(f"{lang}*.db")
+    return [path.stem for path in paths]
