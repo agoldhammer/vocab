@@ -15,9 +15,7 @@ class Keypress(Enum):
 
 
 Vitem = namedtuple(
-    "Vitem",
-    ["rowid", "src", "target", "supp",
-     "lrd_from", "lrd_to", "nseen"]
+    "Vitem", ["rowid", "src", "target", "supp", "lrd_from", "lrd_to", "nseen"]
 )
 
 
@@ -66,7 +64,7 @@ def get_count(conn):
     return total, nfrom, nto
 
 
-def fetch_nitems(curs, n, forward, unlearned):
+def fetch_nitems(curs, n, forward, unlearned, web=False):
     """fetch n (or fewer) items from the db
 
     Args:
@@ -74,6 +72,8 @@ def fetch_nitems(curs, n, forward, unlearned):
         n (int): number of items to fetch
         forward (bool): true if forward direction
         unlearned (bool): unlearned only
+        web (bool): if true, return raw items
+         for Web server to convert to json
 
     Returns:
         list[Vitems]: list of Vitem namedtuples, incl rowid
@@ -87,7 +87,10 @@ def fetch_nitems(curs, n, forward, unlearned):
                SELECT rowid, * FROM vocab {where_clause}
                ORDER BY RANDOM() LIMIT {n}"""
     curs.execute(qry_nitems)
-    return map(Vitem._make, curs)
+    if web:
+        return [item for item in curs]
+    else:
+        return map(Vitem._make, curs)
 
 
 def update_nseen(row, conn):
