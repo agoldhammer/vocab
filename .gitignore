@@ -2,3 +2,6 @@
 *.db
 __pycache__/
 vocab.egg-info/
+.vscode/settings.json
+
+
