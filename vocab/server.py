@@ -65,3 +65,15 @@ def fetch():
         return resp
     except ServerException as e:
         return f"Internal error: {e}", 500
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    # print(f"headers: {request.headers}")
+    # print(f"json: {request.get_json(force=True)}")
+    # print(f"request parms: {request.values}")
+    # print(f"request form {request.form}")
+    logdata = request.get_json(force=True)
+    uname, pw = logdata["uname"], logdata["pw"]
+    print(uname, pw)
+    return {"login": "ok"}
