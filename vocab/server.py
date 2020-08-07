@@ -1,4 +1,5 @@
 from flask import (Flask, session, request)
+import flask_login as fli
 
 from vocab.fileman import get_all_dbs, db_connect
 from vocab.practice import get_count, fetch_nitems
@@ -13,6 +14,8 @@ app = Flask(__name__,
             static_folder=site_path,
             template_folder=site_path)
 app.secret_key = b'96\x91Q\xf1N\x86\x1b\xc3&1\x92\x9f\tU\xca'
+
+login_manager = fli.LoginManager(app)
 
 
 @app.route("/files/<pattern>")
@@ -74,6 +77,6 @@ def login():
     # print(f"request parms: {request.values}")
     # print(f"request form {request.form}")
     logdata = request.get_json(force=True)
-    uname, pw = logdata["uname"], logdata["pw"]
-    print(uname, pw)
+    uname, pw, lang = logdata["username"], logdata["password"], logdata["lang"]
+    print(uname, pw, lang)
     return {"login": "ok"}
