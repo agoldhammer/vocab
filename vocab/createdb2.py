@@ -16,15 +16,6 @@ def create_db(name):
         """CREATE TABLE vocab
         (src text, target text, supp text)"""
     )
-    curs.execute(
-        """
-        CREATE TABLE users
-        (uname text, upw text)
-        """
-    )
-    curs.execute(
-        "INSERT INTO users VALUES ('test', 'dummy')"
-    )
     conn.commit()
     conn.close()
 
