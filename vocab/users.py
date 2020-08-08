@@ -29,10 +29,10 @@ class UsersDB():
 
 class User():
 
-    def __init__(self, username, db):
+    def __init__(self, username):
         self.username = username
-        self.db = db
-        self.user = db.username_to_record(username)
+        self.db = UsersDB("users")
+        self.user = self.db.username_to_record(username)
 
     def is_authenticated(self, password):
         if self.user is None:
@@ -51,9 +51,9 @@ class User():
 
 # # for debugging
 # usersdb = UsersDB("users")
-# u = User("art", usersdb)
+# u = User("test", usersdb)
 
 # # print(f"auth? {u.is_authenticated('dummy')}")
 # # print(f"auth? {u.is_authenticated('goldie')}")
 
-# print(u.user)
+# print(u.user["username"])

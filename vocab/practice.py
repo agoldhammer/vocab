@@ -52,16 +52,16 @@ def get_count(conn):
         int: number of items in db
     """
     qry_count = "SELECT COUNT(*) FROM vocab"
-    qry_from = " where lrd_from = 1"
-    qry_to = " where lrd_to = 1"
+    #  qry_from = " where lrd_from = 1"
+    #  qry_to = " where lrd_to = 1"
     curs = conn.cursor()
     curs.execute(qry_count)
     total = curs.fetchone()[0]
-    curs.execute(qry_count + qry_from)
-    nfrom = curs.fetchone()[0]
-    curs.execute(qry_count + qry_to)
-    nto = curs.fetchone()[0]
-    return total, nfrom, nto
+    # curs.execute(qry_count + qry_from)
+    # nfrom = curs.fetchone()[0]
+    # curs.execute(qry_count + qry_to)
+    # nto = curs.fetchone()[0]
+    return total  # , nfrom, nto
 
 
 def fetch_nitems(curs, n, forward, unlearned, web=False):
