@@ -1,21 +1,43 @@
 
+from sqlite3 import Row
+
 from werkzeug.security import check_password_hash
+
 from vocab.fileman import db_connect
 
 
-class User():
+class UsersDB():
     def __init__(self, udbname):
         self.conn = db_connect(udbname)
+        self.conn.row_factory = Row
 
-    def is_authenticated(self, username, password):
+    def username_to_record(self, username):
         cursor = self.conn.cursor()
         res = cursor.execute(
             f"SELECT rowid, * FROM users WHERE username = '{username}'"
         )
-        print(f"res: {res}")
-        hash = res.fetchone()[2]
-        print(f"hash: {hash}")
-        return check_password_hash(hash, password)
+        return res.fetchone()
+
+    def id_to_record(self, uid: str):
+        uid = int(uid)
+        cursor = self.conn.cursor()
+        res = cursor.execute(
+            f"SELECT rowid, * FROM users WHERE rowid = {uid}"
+        )
+        return res.fetchone()
+
+
+class User():
+
+    def __init__(self, username, db):
+        self.username = username
+        self.db = db
+        self.user = db.username_to_record(username)
+
+    def is_authenticated(self, password):
+        if self.user is None:
+            return False
+        return check_password_hash(self.user['pwhash'], password)
 
     def is_active(self, username):
         return True
@@ -23,14 +45,15 @@ class User():
     def is_anonymous(self, username):
         return False
 
-    def get_id(self, username):
-        pass
+    def get_uid(self):
+        return self.user['uid']
 
 
-# for debugging
-# u = User("users")
-# print(f"user obj: {u}")
-# res = u.is_authenticated("test", "dummy")
-# print(f"dummy {res}")
-# res = u.is_authenticated("test", "goldie")
-# print(f"goldie {res}")
+# # for debugging
+# usersdb = UsersDB("users")
+# u = User("art", usersdb)
+
+# # print(f"auth? {u.is_authenticated('dummy')}")
+# # print(f"auth? {u.is_authenticated('goldie')}")
+
+# print(u.user)

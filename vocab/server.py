@@ -3,6 +3,7 @@ import flask_login as fli
 
 from vocab.fileman import get_all_dbs, db_connect
 from vocab.practice import get_count, fetch_nitems
+from vocab.users import User, UsersDB
 
 
 class ServerException(Exception):
@@ -16,6 +17,13 @@ app = Flask(__name__,
 app.secret_key = b'96\x91Q\xf1N\x86\x1b\xc3&1\x92\x9f\tU\xca'
 
 login_manager = fli.LoginManager(app)
+
+users_db = UsersDB("users")
+
+
+@login_manager.user_loader
+def load_user(uid: str):
+    return users_db.id_to_record(uid)
 
 
 @app.route("/files/<pattern>")
@@ -79,4 +87,8 @@ def login():
     logdata = request.get_json(force=True)
     uname, pw, lang = logdata["username"], logdata["password"], logdata["lang"]
     print(uname, pw, lang)
-    return {"login": "ok"}
+    user = User(uname, users_db)
+    if user.is_authenticated(pw):
+        return {"login": "ok"}
+    else:
+        return {"login": "rejected"}
