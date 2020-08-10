@@ -16,3 +16,8 @@ On windows, need:
 not /home/agold/mnt/c/Google Drive
 fixed by linking Google Drive to ~/Google_Drive
 
+windows ps:
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+run script
+
+
