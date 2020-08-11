@@ -1,10 +1,12 @@
 import click
 
-from vocab.createdb import create_db
+from vocab.createdb2 import create_db
 from vocab.practice import show_selected
 from vocab.vocabu import execute
 from vocab.fileman import db_connect, backup_db
 from vocab.lexgui import gui_conn, ExitException
+
+## NOTE: createdb2 has replaced createdb, which will be removed later
 
 
 @click.group()
