@@ -45,8 +45,11 @@ class User():
     def is_anonymous(self, username):
         return False
 
-    def get_uid(self):
-        return self.user['uid']
+    def get_id(self):
+        if self.user is not None:
+            return self.user['rowid']
+        else:
+            return None
 
 
 # # for debugging

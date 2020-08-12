@@ -16,13 +16,26 @@ app = Flask(__name__,
             template_folder=site_path)
 app.secret_key = b'96\x91Q\xf1N\x86\x1b\xc3&1\x92\x9f\tU\xca'
 
+
+def unauth_callback():
+    return {"access": "unauthorized"}
+
 login_manager = fli.LoginManager(app)
+login_manager.login_view = "login"
+login_manager.unauthorized_handler = unauth_callback
 
 
+# https://github.com/shihanng/flask-login-example
 @login_manager.user_loader
 def load_user(uid: str):
+    print(f"load user looking for uid: {uid}")
     users_db = UsersDB("users")
-    return users_db.id_to_record(uid)
+    print(f"load user loaded {users_db.id_to_record(uid)}")
+    row = users_db.id_to_record(uid)
+    if row is not None:
+        return User(row['username'])
+    else:
+        return None
 
 
 # @app.route("/files/<pattern>")
@@ -48,6 +61,7 @@ def get_conn():
 
 
 @app.route("/getcount")
+@fli.login_required
 def getcount():
     print(request.headers)
     try:
@@ -62,6 +76,7 @@ def getcount():
 
 
 @app.route("/fetch")
+@fli.login_required
 def fetch():
     try:
         print("fetching")
@@ -86,10 +101,11 @@ def login():
     lang = login_data["lang"]
     print(f"login: {username} {pw} {lang}")
     user = User(username)
+    fli.login_user(user)
     if user.is_authenticated(pw):
         session["username"] = username
         session["uid"] = user.user["rowid"]
         session["active_db"] = lang.lower()
-        return {"login": "ok"}
+        return {"login": "ok", "active-db": lang.lower()}
     else:
         return {"login": "rejected"}
