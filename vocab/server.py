@@ -100,12 +100,16 @@ def login():
     pw = login_data["password"]
     lang = login_data["lang"]
     print(f"login: {username} {pw} {lang}")
+    session["active_db"] = lang.lower()
+    conn = get_conn()
+    total = get_count(conn)
     user = User(username)
     fli.login_user(user)
     if user.is_authenticated(pw):
         session["username"] = username
         session["uid"] = user.user["rowid"]
-        session["active_db"] = lang.lower()
-        return {"login": "ok", "active-db": lang.lower()}
+        return {"login": "ok",
+                "active-db": lang.lower(),
+                "total": total}
     else:
         return {"login": "rejected"}
