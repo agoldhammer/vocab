@@ -3,5 +3,9 @@
 __pycache__/
 vocab.egg-info/
 .vscode/settings.json
+vocab/.DS_Store
+.DS_Store
+
+
 
 
