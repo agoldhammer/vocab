@@ -35,7 +35,7 @@ def migrate(masterdb_name, old_db_name):
     vocab_items = [dict(zip(keys, item)) for item in curs]
     curs.close()
 
-    engine = create_engine(f"sqlite:///{fqmasterdbname}", echo = True)
+    engine = create_engine(f"sqlite:///{fqmasterdbname}", echo=True)
     conn = engine.connect()
     conn.execute(lexicon.insert(), vocab_items)
 

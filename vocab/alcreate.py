@@ -3,12 +3,12 @@ import sys
 from sqlalchemy import create_engine
 
 from vocab.fileman import DBDIR, make_fqname
-from vocab.tables import lexicon, meta_lexicon
+from vocab.tables import meta_lexicon
 
 
 def create_sqadb(name):
     print(f"Creating sqlite:///{name}")
-    engine = create_engine(f"sqlite:///{fqdbname}", echo = True)
+    engine = create_engine(f"sqlite:///{fqdbname}", echo=True)
     meta_lexicon.create_all(engine)
 
 
