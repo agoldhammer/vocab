@@ -1,21 +1,22 @@
-from sqlalchemy import (create_engine,
-    Table, Column, Integer, String, MetaData)
-from vocab.fileman import make_fqname, DBDIR
+import sys
 
-fqdbname = make_fqname("alctest", DBDIR)
-print(fqdbname)
-print(f"sqlite:///{fqdbname}")
+from sqlalchemy import create_engine
 
-engine = create_engine(f"sqlite:///{fqdbname}", echo = True)
-
-meta = MetaData()
-
-vocab = Table('vocab', meta,
-    Column('id', Integer, primary_key=True),
-    Column('src', String),
-    Column('target', String),
-    Column('supp', String))
-
-meta.create_all(engine)
+from vocab.fileman import DBDIR, make_fqname
+from vocab.tables import lexicon, meta_lexicon
 
 
+def create_sqadb(name):
+    print(f"Creating sqlite:///{name}")
+    engine = create_engine(f"sqlite:///{fqdbname}", echo = True)
+    meta_lexicon.create_all(engine)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Must specify db name w/o extension: e.g., sqagerman")
+        sys.exit(1)
+    else:
+        dbname = sys.argv[1]
+        fqdbname = make_fqname(dbname, DBDIR)
+        create_sqadb(fqdbname)
