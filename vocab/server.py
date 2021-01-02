@@ -20,6 +20,7 @@ app.secret_key = b'96\x91Q\xf1N\x86\x1b\xc3&1\x92\x9f\tU\xca'
 def unauth_callback():
     return {"access": "unauthorized"}
 
+
 login_manager = fli.LoginManager(app)
 login_manager.login_view = "login"
 login_manager.unauthorized_handler = unauth_callback
