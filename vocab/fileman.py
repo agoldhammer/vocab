@@ -1,12 +1,15 @@
 # file manager for slexy
-from configparser import ConfigParser
 import os
 import shutil
 import sqlite3
+from configparser import ConfigParser
 from pathlib import Path
 
-# DBDIR = "Prog/vocab/vocab"
-# VOCABDIR = "Google Drive/Vocabulary"
+from sqlalchemy import create_engine
+
+# this is a singleton, created and accessed through get_vocab_engine
+_vocab_engine = None
+
 
 config = ConfigParser()
 config.read(Path.home() / ".vocab/vocab.ini")
@@ -90,3 +93,19 @@ def get_all_dbs(lang):
     pattern = Path.home() / Path(DBDIR)
     paths = pattern.glob(f"{lang}*.db")
     return [path.stem for path in paths]
+
+
+def get_vocab_engine(dbname: str):
+    """return (creating if necessary) engine for vocab db
+
+    Args:
+        dbname (str): base name of vocab db
+
+    Returns:
+        sqlalchemy.Engine: the engine
+    """
+    global _vocab_engine
+    if _vocab_engine is None:
+        fqmasterdbname = make_fqname(dbname, DBDIR)
+        _vocab_engine = create_engine(f"sqlite:///{fqmasterdbname}")
+    return _vocab_engine
