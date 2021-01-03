@@ -107,5 +107,7 @@ def get_vocab_engine(dbname: str):
     global _vocab_engine
     if _vocab_engine is None:
         fqmasterdbname = make_fqname(dbname, DBDIR)
-        _vocab_engine = create_engine(f"sqlite:///{fqmasterdbname}")
+        url = f"sqlite:///{fqmasterdbname}"
+        print(f"conn to url: {url}")
+        _vocab_engine = create_engine(url)
     return _vocab_engine
