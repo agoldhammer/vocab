@@ -1,3 +1,5 @@
+import sys
+
 from typing import Tuple
 
 from sqlalchemy import func, select, text
@@ -43,8 +45,12 @@ def count_vocab(dbname: str) -> int:
 
 
 if __name__ == "__main__":
-    rows = fetch_slugs("sqagerman", 20)
+    if len(sys.argv) < 2:
+        print("Must specify name of an sqa formatted db")
+        sys.exit(1)
+    sqadbname = sys.argv[1]
+    rows = fetch_slugs(sqadbname, 20)
     for row in rows:
         print(row)
-    nrows = count_vocab("sqagerman")
+    nrows = count_vocab(sqadbname)
     print(f"nrows: {nrows}")
