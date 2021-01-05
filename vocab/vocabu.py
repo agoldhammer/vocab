@@ -1,12 +1,14 @@
 import docx
 
 from vocab.fileman import (get_fqdocname,
+                           get_session,
                            db_connect,
                            backup_db,
                            db_exists)
 from vocab.createdb import create_db
 from vocab.models import Slug
 from dataclasses import dataclass
+from typing import List
 
 @dataclass
 class vocabitem:
@@ -108,14 +110,14 @@ def execute(store, fname, dbname):
     print(f"Total vitems: {len(vitems)}")
 
 
-def add_vocab(store: bool, fname: str, dbname: str):
-    """if store == True, store vitems from doc fname in db
-    named dbname; else just display the vitems on the console
+def process_doc(fname: str) -> List[List[str]]:
+    """convert word doc to list of Slugs (defined in models.py)
 
     Args:
-        store (Bool): store in db if true, else dry run
-        fname (Str): base name of docx vocab file, w/o ext
-        dbname (Str): base name of db file, w/o ext
+        fname (str): base name of Word doc
+
+    Returns:
+        List[[str, str, str]]: List of [src, target, supp] derived from each line of doc
     """
     doc = get_doc(fname)
     vitems = get_vitems(doc)
@@ -128,16 +130,32 @@ def add_vocab(store: bool, fname: str, dbname: str):
             valid_vitems.append([v[0].strip(), v[1].strip(), v[2].strip()])
         else:
             invalid_vitems.append(v)
-    # for vitem in valid_vitems:
-    #     print(vitem)
+    for v in invalid_vitems:
+        print(f"Invalid: {v}")
+    return valid_vitems
+
+
+def add_vocab(store: bool, fname: str, dbname: str):
+    """if store == True, store vitems from doc fname in db
+    named dbname; else just display the vitems on the console
+
+    Args:
+        store (Bool): store in db if true, else dry run
+        fname (Str): base name of docx vocab file, w/o ext
+        dbname (Str): base name of db file, w/o ext
+    """
+    
+    valid_vitems = process_doc(fname)
     if store:
         slugs = [Slug(src=v[0], target=v[1], supp=v[2]) for v in valid_vitems]
         for slug in slugs:
             print(slug)
-        # store_data([tuple(vitem) for vitem in valid_vitems], dbname)
-    for vitem in invalid_vitems:
-        print(f"Bad vitem: {vitem}")
-    print(f"Total vitems: {len(vitems)}")
+        session = get_session(dbname)
+        session.add_all(slugs)
+        session.commit()
+        print(f"Total valid defs added: {len(valid_vitems)}")
+    else:
+        print("Dry run: Data not stored")
 
 
 if __name__ == "__main__":

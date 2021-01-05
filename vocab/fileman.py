@@ -6,6 +6,7 @@ from configparser import ConfigParser
 from pathlib import Path
 
 from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 # this is a singleton, created and accessed through get_vocab_engine
 _vocab_engine = None
@@ -111,3 +112,9 @@ def get_vocab_engine(dbname: str):
         print(f"conn to url: {url}")
         _vocab_engine = create_engine(url)
     return _vocab_engine
+
+
+def get_session(dbname: str):
+    engine = get_vocab_engine(dbname)
+    Session = sessionmaker(bind=engine)
+    return Session()
