@@ -5,6 +5,15 @@ from vocab.fileman import (get_fqdocname,
                            backup_db,
                            db_exists)
 from vocab.createdb import create_db
+from vocab.models import Slug
+from dataclasses import dataclass
+
+@dataclass
+class vocabitem:
+    src: str
+    target: str
+    supp: str
+
 
 
 def get_doc(fname: str) -> docx.Document:
@@ -94,6 +103,38 @@ def execute(store, fname, dbname):
         print(vitem)
     if store:
         store_data([tuple(vitem) for vitem in valid_vitems], dbname)
+    for vitem in invalid_vitems:
+        print(f"Bad vitem: {vitem}")
+    print(f"Total vitems: {len(vitems)}")
+
+
+def add_vocab(store: bool, fname: str, dbname: str):
+    """if store == True, store vitems from doc fname in db
+    named dbname; else just display the vitems on the console
+
+    Args:
+        store (Bool): store in db if true, else dry run
+        fname (Str): base name of docx vocab file, w/o ext
+        dbname (Str): base name of db file, w/o ext
+    """
+    doc = get_doc(fname)
+    vitems = get_vitems(doc)
+    valid_vitems = []
+    invalid_vitems = []
+    for vitem in vitems:
+        status, v = validate_vitem(vitem)
+        # print(status, v)
+        if status:
+            valid_vitems.append([v[0].strip(), v[1].strip(), v[2].strip()])
+        else:
+            invalid_vitems.append(v)
+    # for vitem in valid_vitems:
+    #     print(vitem)
+    if store:
+        slugs = [Slug(src=v[0], target=v[1], supp=v[2]) for v in valid_vitems]
+        for slug in slugs:
+            print(slug)
+        # store_data([tuple(vitem) for vitem in valid_vitems], dbname)
     for vitem in invalid_vitems:
         print(f"Bad vitem: {vitem}")
     print(f"Total vitems: {len(vitems)}")

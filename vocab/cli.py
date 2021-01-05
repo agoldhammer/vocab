@@ -2,9 +2,10 @@ import click
 
 from vocab.createdb2 import create_db
 # from vocab.practice import show_selected
-from vocab.vocabu import execute
-from vocab.fileman import db_connect, backup_db
+from vocab.vocabu import execute, add_vocab
+# from vocab.fileman import db_connect, backup_db
 # from vocab.lexgui import gui_conn, ExitException
+from vocab.models import create_sqldb
 
 ## NOTE: createdb2 has replaced createdb, which will be removed later
 
@@ -12,38 +13,6 @@ from vocab.fileman import db_connect, backup_db
 @click.group()
 def main():
     pass
-
-
-# @main.command()
-# @click.option("-n", default=10, help="number of samples")
-# @click.option("--unlearned/--all", default=True, help="show previously failed only")
-# @click.option(
-#     "--forward/--backward",
-#     default=True,
-#     help="forward: show source first, backward: show target first",
-# )
-# @click.option(
-#     "--nogui/--gui",
-#     default=True,
-#     help="--nogui/--gui: use cli/use gui"
-# )
-# @click.argument("dbname")
-# def practice(n, unlearned, forward, dbname, nogui):
-#     conn = None
-#     try:
-#         # backup the db before modifying
-#         backup_db(dbname)
-#         conn = db_connect(dbname)
-#         if nogui:
-#             show_selected(n, conn, forward, unlearned)
-#         else:
-#             gui_conn(n, conn, forward, unlearned)
-#     except ExitException as e:
-#         print(e)
-#     finally:
-#         if conn:
-#             conn.commit()
-#             conn.close()
 
 
 @main.command()
@@ -59,6 +28,24 @@ def addvocab(store, fname, dbname):
 
 
 @main.command()
+@click.option("--store/--nostore", default=False,
+              help="store/nostore in detabase, creating if necessary")
+@click.argument("fname")
+@click.argument("dbname")
+def process(store, fname, dbname):
+    try:
+        add_vocab(store, fname, dbname)
+    except Exception as e:
+        print(e)
+
+
+@main.command()
 @click.argument("dbname")
 def createdb(dbname):
     create_db(dbname)
+
+
+@main.command()
+@click.argument("sqdbname")
+def createsqldb(sqdbname):
+    create_sqldb(sqdbname)
