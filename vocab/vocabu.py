@@ -7,15 +7,7 @@ from vocab.fileman import (get_fqdocname,
                            db_exists)
 from vocab.createdb import create_db
 from vocab.models import Slug
-from dataclasses import dataclass
 from typing import List
-
-@dataclass
-class vocabitem:
-    src: str
-    target: str
-    supp: str
-
 
 
 def get_doc(fname: str) -> docx.Document:
