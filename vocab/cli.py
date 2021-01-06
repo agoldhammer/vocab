@@ -7,7 +7,7 @@ from vocab.vocabu import execute, add_vocab
 # from vocab.lexgui import gui_conn, ExitException
 from vocab.models import create_sqldb
 
-## NOTE: createdb2 has replaced createdb, which will be removed later
+# NOTE: createdb2 has replaced createdb, which will be removed later
 
 
 @click.group()
