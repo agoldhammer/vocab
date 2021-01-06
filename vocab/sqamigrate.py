@@ -2,8 +2,8 @@ import sys
 
 from sqlalchemy import create_engine
 
-from vocab.fileman import db_connect, db_exists, make_fqname, DBDIR
-from vocab.tables import lexicon
+from vocab.fileman import db_connect, db_exists, make_fqname, DBDIR, get_session
+from vocab.models import Slug
 
 """
 Module to migrate from original design dbs to sqlalchemy design
@@ -23,7 +23,6 @@ def migrate(masterdb_name, old_db_name):
     else:
         print(f"{old_db_name} not found")
         sys.exit(1)
-    fqmasterdbname = make_fqname(masterdb_name, DBDIR)
     conn = db_connect(old_db_name)
     curs = conn.cursor()
     curs.execute(
@@ -31,13 +30,10 @@ def migrate(masterdb_name, old_db_name):
        SELECT * FROM vocab;
         """
     )
-    keys = ("src", "target", "supp")
-    vocab_items = [dict(zip(keys, item)) for item in curs]
-    curs.close()
-
-    engine = create_engine(f"sqlite:///{fqmasterdbname}", echo=True)
-    conn = engine.connect()
-    conn.execute(lexicon.insert(), vocab_items)
+    session = get_session(masterdb_name)
+    slugs = [Slug(src=item[0], target=item[1], supp=item[2]) for item in curs]
+    session.add_all(slugs)
+    session.commit()
 
 
 if __name__ == "__main__":
