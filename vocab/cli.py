@@ -20,7 +20,7 @@ def main():
               help="store/nostore in detabase, creating if necessary")
 @click.argument("fname")
 @click.argument("dbname")
-def addvocab(store, fname, dbname):
+def addvocabold(store, fname, dbname):
     try:
         execute(store, fname, dbname)
     except Exception as e:
@@ -32,7 +32,7 @@ def addvocab(store, fname, dbname):
               help="store/nostore in detabase, creating if necessary")
 @click.argument("fname")
 @click.argument("dbname")
-def process(store, fname, dbname):
+def addvocab(store, fname, dbname):
     try:
         add_vocab(store, fname, dbname)
     except Exception as e:
