@@ -6,6 +6,7 @@ from vocab.vocabu import execute, add_vocab
 # from vocab.fileman import db_connect, backup_db
 # from vocab.lexgui import gui_conn, ExitException
 from vocab.models import create_sqldb
+from vocab.useradmin import add_user
 
 # NOTE: createdb2 has replaced createdb, which will be removed later
 
@@ -49,3 +50,11 @@ def createdb(dbname):
 @click.argument("sqdbname")
 def createsqldb(sqdbname):
     create_sqldb(sqdbname)
+
+
+@main.command()
+@click.argument("dbname")
+@click.argument("username")
+@click.argument("password")
+def new_user(dbname, username, password):
+    add_user(dbname, username, password)
