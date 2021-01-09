@@ -1,47 +1,39 @@
 import sys
-
 from typing import Tuple
 
-from sqlalchemy import func, select, text
+from sqlalchemy.orm.session import Session
+from sqlalchemy.sql.expression import func
 
-from vocab.fileman import get_vocab_engine
-from vocab.tables import lexicon
+from vocab.fileman import get_session
+from vocab.models import Slug
 
 
-def fetch_slugs(dbname: str, num_to_fetch: int = 25) -> Tuple[int, str, str, str]:
+def fetch_slugs(sess: Session, num_to_fetch: int = 25) -> Tuple[int, str, str, str]:
     """[fetch the vocab items from lexicon]
 
     Args:
-        dbname (str): base name of vocabulary database
+        sess (Session): ORM session
         num_to_fetch (int, optional): number of vocab items to fetch. Defaults to 25.
 
     Return:
-        Tuple[id: int, src: str, target: str, supp: str]
+        Tuple[wid: int, src: str, target: str, supp: str]
     """
-    qry_nitems = f"SELECT * FROM lexicon ORDER BY RANDOM() LIMIT {num_to_fetch}"
-    s = text(qry_nitems)
-    engine = get_vocab_engine(dbname)
-    with engine.connect() as conn:
-        result = conn.execute(s)
-        rows = result.fetchall()
-    return rows
+    # See: https://stackoverflow.com/questions/60805/getting-random-row-through-sqlalchemy
+    # select.order_by(func.rand()) for MySQL
+    slugs = sess.query(Slug).order_by(func.random()).limit(num_to_fetch)
+    return [[slug.wid, slug.src, slug.target, slug.supp] for slug in slugs]
 
 
-def count_vocab(dbname: str) -> int:
+def count_vocab(sess: Session) -> int:
     """return number of vocab items in lexicon of dbname
 
     Args:
-        dbname (str): base name of vocab db
+        sess (Session): ORM session
 
     Returns:
         int: number of vocab items in db
     """
-    s = select([func.count()]).select_from(lexicon)
-    engine = get_vocab_engine(dbname)
-    with engine.connect() as conn:
-        result = conn.execute(s)
-        nrows = result.fetchone()[0]
-    return nrows
+    return sess.query(Slug).count()
 
 
 if __name__ == "__main__":
@@ -49,8 +41,9 @@ if __name__ == "__main__":
         print("Must specify name of an sqa formatted db")
         sys.exit(1)
     sqadbname = sys.argv[1]
-    rows = fetch_slugs(sqadbname, 20)
+    sess = get_session(sqadbname)
+    rows = fetch_slugs(sess, 5)
     for row in rows:
         print(row)
-    nrows = count_vocab(sqadbname)
+    nrows = count_vocab(sess)
     print(f"nrows: {nrows}")

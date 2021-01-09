@@ -1,6 +1,5 @@
 from vocab.fileman import get_session
-
-from vocab.models import User, Score
+from vocab.models import Score, User
 
 
 def add_user(dbname: str, name: str, pw: str, hash: int = 0):
