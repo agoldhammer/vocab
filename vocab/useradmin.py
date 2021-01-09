@@ -17,16 +17,23 @@ def append_new_score(user: User, wid: int):
     user.scores.append(score)
 
 
+def get_user_id(sess, uid: int) -> User:
+    user = sess.query(User).filter(User.uid == uid).one_or_none()
+    return user
+
+
 if __name__ == "__main__":
     sess = get_session("redux")
-    users = sess.query(User)
-    for user in users:
-        print(user)
-    user = users.filter(User.uid == 1).one()
-    append_new_score(user=user, wid=1)
-    print(user)
-    sess.commit()
-    users = sess.query(User)
-    for user in users:
-        for score in user.scores:
-            print(score)
+    for uid in range(1, 4):
+        user = get_user_id(sess, uid)
+        if user is not None:
+            print(user)
+        else:
+            print(f"No such user id={uid}")
+    # append_new_score(user=user, wid=1)
+    # print(user)
+    # sess.commit()
+    # users = sess.query(User)
+    # for user in users:
+    #     for score in user.scores:
+    #         print(score)

@@ -29,7 +29,7 @@ class User(Base):
     scores = relationship("Score", back_populates="users")
 
     def __repr__(self) -> str:
-        return f"<User(uid={self.uid}, pw={self.pw}, hash={self.hash})>"
+        return f"<User(uid={self.uid}, uname={self.uname}, pw={self.pw}, hash={self.hash})>"
 
 
 class Score(Base):
