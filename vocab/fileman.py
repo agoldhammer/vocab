@@ -7,6 +7,7 @@ from pathlib import Path
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.session import Session
 
 # this is a singleton, created and accessed through get_vocab_engine
 _vocab_engine = None
@@ -114,7 +115,15 @@ def get_vocab_engine(dbname: str):
     return _vocab_engine
 
 
-def get_session(dbname: str):
+def get_session(dbname: str) -> Session:
+    """get a session from the current engine
+
+    Args:
+        dbname (str): name of sqlalchemy db
+
+    Returns:
+        Session: ORM session object
+    """
     engine = get_vocab_engine(dbname)
     Session = sessionmaker(bind=engine)
     return Session()
