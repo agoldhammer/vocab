@@ -26,7 +26,8 @@ class User(Base):
     uname = Column(String)
     pw = Column(String)
     hash = Column(Integer)
-    scores = relationship("Score", back_populates="users")
+    scores = relationship("Score", back_populates="users",
+                          cascade="all, delete, delete-orphan")
 
     def __repr__(self) -> str:
         return f"<User(uid={self.uid}, uname={self.uname}, pw={self.pw}, hash={self.hash})>"
