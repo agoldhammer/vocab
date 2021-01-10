@@ -25,7 +25,8 @@ def append_new_score(sess, uid: int, wid: int):
     user.scores.append(score)
     sess.add(user)
 
-
+# on query with joins, see
+#  https://stackoverflow.com/questions/45290283/querying-with-joins-in-sql-alchemy-and-avoiding-select-all
 def get_score_by_uid_wid(sess, uid: int, wid: int) -> Score:
     scores = sess.query(User, Score).filter(User.uid == uid).\
         filter(Score.uid == uid).\
