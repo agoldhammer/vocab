@@ -1,9 +1,10 @@
 from flask import (Flask, session, request)
 import flask_login as fli
+from flask_sqlalchemy import SQLAlchemy
 
 from vocab.fileman import db_connect
-from vocab.practice import get_count, fetch_nitems
 from vocab.users import User, UsersDB
+from vocab.datafetch import fetch_slugs, count_vocab
 
 
 class ServerException(Exception):
@@ -15,6 +16,10 @@ app = Flask(__name__,
             static_folder=site_path,
             template_folder=site_path)
 app.secret_key = b'96\x91Q\xf1N\x86\x1b\xc3&1\x92\x9f\tU\xca'
+
+# FIXME: this is temporary!!
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////Users/agold/Dropbox/Vocabulary/dbs/redux.db"
+db = SQLAlchemy(app)
 
 
 def unauth_callback():
@@ -66,10 +71,7 @@ def get_conn():
 def getcount():
     print(request.headers)
     try:
-        conn = get_conn()
-        # total, nfrom, nto = get_count(conn)
-        total = get_count(conn)
-        conn.close()
+        total = count_vocab(db.session)
         resp = {"total": total}
         return resp
     except ServerException as e:
@@ -81,14 +83,13 @@ def getcount():
 def fetch():
     try:
         print("fetching")
-        conn = get_conn()
-        curs = conn.cursor()
-        slugs = fetch_nitems(curs, 50, True, False, web=True)
-        conn.close()
+
+        slugs = fetch_slugs(db.session, 50)
         resp = {"slugs": slugs,
                 "count": len(slugs),
                 "dir": "fwd",
                 "unlearned": False}
+        print(resp)
         return resp
     except ServerException as e:
         return f"Internal error: {e}", 500
@@ -102,8 +103,7 @@ def login():
     lang = login_data["lang"]
     print(f"login: {username} {pw} {lang}")
     session["active_db"] = lang.lower()
-    conn = get_conn()
-    total = get_count(conn)
+    total = count_vocab(db.session)
     user = User(username)
     fli.login_user(user)
     if user.is_authenticated(pw):
