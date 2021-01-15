@@ -6,8 +6,10 @@ class QueryError(Exception):
     pass
 
 
-def add_user(dbname: str, name: str, pw: str, hash: int = 0):
-    user = User(uname=name, pw=pw, hash=hash)
+def add_user(dbname: str, name: str, pw: str):
+    user = User(uname=name, hash=0)
+    # create hash from password and save in user
+    user.set_password(pw)
     sess = get_session(dbname)
     sess.add(user)
     sess.commit()

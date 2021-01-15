@@ -1,11 +1,9 @@
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from vocab.fileman import get_vocab_engine
-
-from werkzeug.security import check_password_hash
-
 
 Base = declarative_base()
 
@@ -27,7 +25,7 @@ class User(Base):
 
     uid = Column(Integer, primary_key=True)
     uname = Column(String)
-    pw = Column(String)
+    # pw = Column(String)
     hash = Column(Integer)
     scores = relationship("Score", back_populates="users",
                           cascade="all, delete, delete-orphan")
@@ -52,6 +50,9 @@ class User(Base):
             return self.user.uid
         else:
             return None
+
+    def set_password(self, password):
+        self.hash = generate_password_hash(password)
 
     def __repr__(self) -> str:
         return f"<User(uid={self.uid}, uname={self.uname}, pw={self.pw}, hash={self.hash})>"
