@@ -1,7 +1,6 @@
 import sys
 from typing import Optional, Tuple
 
-from sqlalchemy import select
 from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.expression import func
 
@@ -22,7 +21,7 @@ def fetch_slugs(sess: Session, num_to_fetch: int = 25) -> Tuple[int, str, str, s
     # See: https://stackoverflow.com/questions/60805/getting-random-row-through-sqlalchemy
     # select.order_by(func.rand()) for MySQL
     slugs = sess.query(Slug).order_by(func.random()).limit(num_to_fetch)
-    return [[slug.wid, slug.src, slug.target, slug.supp] for slug in slugs]
+    return [[slug.wid, slug.src, slug.target, slug.supp] for slug in slugs]  # type: ignore
 
 
 def count_vocab(sess: Session) -> int:
@@ -46,8 +45,8 @@ def fetch_user_by_id(sess: Session, uid: int) -> Optional[User]:
 
     Returns:
         Optional[User]: the user corresponding to the uid
-    """    
-    user = sess.query(User).filter(User.uid==uid).one_or_none()
+    """
+    user = sess.query(User).filter(User.uid == uid).one_or_none()
     return user
 
 

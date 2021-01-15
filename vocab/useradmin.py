@@ -1,5 +1,6 @@
 from vocab.fileman import get_session
 from vocab.models import Score, User
+from typing import Optional, TYPE_CHECKING
 
 
 class QueryError(Exception):
@@ -7,7 +8,8 @@ class QueryError(Exception):
 
 
 def add_user(dbname: str, name: str, pw: str):
-    user = User(uname=name, hash=0)
+    if not TYPE_CHECKING:
+        user = User(name, 0)
     # create hash from password and save in user
     user.set_password(pw)
     sess = get_session(dbname)
@@ -23,14 +25,14 @@ def get_user_id(sess, uid: int) -> User:
 # this should be used inside a session
 def append_new_score(sess, uid: int, wid: int):
     user = get_user_id(sess, uid)
-    score = Score(uid=uid, wid=wid, lrndsrc=0, lrndtgt=0, nseen=1)
+    score = Score(uid, wid, 0, 0, 0)  # type: ignore
     user.scores.append(score)
     sess.add(user)
 
 
 # on query with joins, see
 #  https://stackoverflow.com/questions/45290283/querying-with-joins-in-sql-alchemy-and-avoiding-select-all
-def get_score_by_uid_wid(sess, uid: int, wid: int) -> Score:
+def get_score_by_uid_wid(sess, uid: int, wid: int) -> Optional[Score]:
     scores = sess.query(User, Score).filter(User.uid == uid).\
         filter(Score.uid == uid).\
         filter(Score.wid == wid).all()

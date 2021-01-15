@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -5,10 +7,13 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from vocab.fileman import get_vocab_engine
 
-Base = declarative_base()
+if TYPE_CHECKING:
+    Base = object
+else:
+    Base = declarative_base()
 
 
-class Slug(Base):
+class Slug(Base):  # type: ignore
     __tablename__ = "lexicon"
 
     wid = Column(Integer, primary_key=True)
@@ -20,7 +25,7 @@ class Slug(Base):
         return f"<Slug(id={id}, src={self.src}, target={self.target}, supp={self.supp})>"
 
 
-class User(Base):
+class User(Base):  # type: ignore
     __tablename__ = "users"
 
     uid = Column(Integer, primary_key=True)
@@ -55,7 +60,7 @@ class User(Base):
         self.hash = generate_password_hash(password)
 
     def __repr__(self) -> str:
-        return f"<User(uid={self.uid}, uname={self.uname}, pw={self.pw}, hash={self.hash})>"
+        return f"<User(uid={self.uid}, uname={self.uname}, hash={self.hash})>"
 
 
 class Score(Base):
@@ -81,4 +86,4 @@ def create_sqldb(dbname: str):
         dbname (str): base name of db; will use dir specified by config file
     """
     engine = get_vocab_engine(dbname)
-    Base.metadata.create_all(engine)
+    Base.metadata.create_all(engine)  # type: ignore
