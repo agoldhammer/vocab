@@ -5,7 +5,7 @@ from flask import Flask, request, session
 from flask_sqlalchemy import SQLAlchemy
 
 # from vocab.users import User, UsersDB
-from vocab.datafetch import count_vocab, fetch_slugs, fetch_user, fetch_user_by_name
+from vocab.datafetch import count_vocab, fetch_slugs, fetch_user_by_id, fetch_user_by_name
 # from vocab.fileman import db_connect
 from vocab.models import User
 
@@ -46,8 +46,11 @@ def load_user(uid: int) -> Optional[User]:
         models.User or None: [user]
     """    
     print(f"load user looking for uid: {uid}")
-    user = fetch_user(db.session, uid)
-    print(f"User uid {user.name} is {user}, loaded")
+    user = fetch_user_by_id(db.session, uid)
+    if user is not None:
+        print(f"User uid {user.uname} is {user}, loaded")
+    else:
+        print(f"User uid {uid} not found")
     return user
 
 
