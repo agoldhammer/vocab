@@ -1,10 +1,13 @@
-from flask import (Flask, session, request)
+from typing import Optional
+
 import flask_login as fli
+from flask import Flask, request, session
 from flask_sqlalchemy import SQLAlchemy
 
-from vocab.fileman import db_connect
-from vocab.users import User, UsersDB
-from vocab.datafetch import fetch_slugs, count_vocab
+# from vocab.users import User, UsersDB
+from vocab.datafetch import count_vocab, fetch_slugs, fetch_user, fetch_user_by_name
+# from vocab.fileman import db_connect
+from vocab.models import User
 
 
 class ServerException(Exception):
@@ -33,15 +36,19 @@ login_manager.unauthorized_handler = unauth_callback
 
 # https://github.com/shihanng/flask-login-example
 @login_manager.user_loader
-def load_user(uid: str):
+def load_user(uid: int) -> Optional[User]:
+    """load user with given id
+
+    Args:
+        uid (int): user id
+
+    Returns:
+        models.User or None: [user]
+    """    
     print(f"load user looking for uid: {uid}")
-    users_db = UsersDB("users")
-    print(f"load user loaded {users_db.id_to_record(uid)}")
-    row = users_db.id_to_record(uid)
-    if row is not None:
-        return User(row['username'])
-    else:
-        return None
+    user = fetch_user(db.session, uid)
+    print(f"User uid {user.name} is {user}, loaded")
+    return user
 
 
 # @app.route("/files/<pattern>")
@@ -56,14 +63,14 @@ def load_user(uid: str):
 #     return {"ok": "active db set"}
 
 
-def get_conn():
-    if "active_db" in session:
-        dbname = session["active_db"].lower()
-        print(f"get_conn: dbname {dbname}")
-        conn = db_connect(dbname)
-        return conn
-    else:
-        raise(ServerException("active db not set"))
+# def get_conn():
+#     if "active_db" in session:
+#         dbname = session["active_db"].lower()
+#         print(f"get_conn: dbname {dbname}")
+#         conn = db_connect(dbname)
+#         return conn
+#     else:
+#         raise(ServerException("active db not set"))
 
 
 @app.route("/getcount")
@@ -104,7 +111,8 @@ def login():
     print(f"login: {username} {pw} {lang}")
     session["active_db"] = lang.lower()
     total = count_vocab(db.session)
-    user = User(username)
+    # user = User(username)
+    user = fetch_user_by_name(username)
     fli.login_user(user)
     if user.is_authenticated(pw):
         session["username"] = username

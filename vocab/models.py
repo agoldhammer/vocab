@@ -4,6 +4,9 @@ from sqlalchemy.orm import relationship
 
 from vocab.fileman import get_vocab_engine
 
+from werkzeug.security import check_password_hash
+
+
 Base = declarative_base()
 
 
@@ -28,6 +31,27 @@ class User(Base):
     hash = Column(Integer)
     scores = relationship("Score", back_populates="users",
                           cascade="all, delete, delete-orphan")
+
+    # functions for use by flask_login
+
+    def is_authenticated(self, password):
+        if self.user is None:
+            return False
+        print(f"checking password {password}")
+        print(f"pw, hash: {self.user.pw}, {self.user.hash}")
+        return check_password_hash(self.user.hash, password)
+
+    def is_active(self, username):
+        return True
+
+    def is_anonymous(self, username):
+        return False
+
+    def get_id(self):
+        if self.user is not None:
+            return self.user.uid
+        else:
+            return None
 
     def __repr__(self) -> str:
         return f"<User(uid={self.uid}, uname={self.uname}, pw={self.pw}, hash={self.hash})>"

@@ -1,11 +1,12 @@
 import sys
-from typing import Tuple
+from typing import Optional, Tuple
 
+from sqlalchemy import select
 from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.expression import func
 
 from vocab.fileman import get_session
-from vocab.models import Slug
+from vocab.models import Slug, User
 
 
 def fetch_slugs(sess: Session, num_to_fetch: int = 25) -> Tuple[int, str, str, str]:
@@ -36,6 +37,34 @@ def count_vocab(sess: Session) -> int:
     return sess.query(Slug).count()
 
 
+def fetch_user_by_id(sess: Session, uid: int) -> Optional[User]:
+    """fetch user by uid
+
+    Args:
+        sess (Session): sqlalchemy session
+        uid (int): user id
+
+    Returns:
+        Optional[User]: the user corresponding to the uid
+    """    
+    user = sess.query(User).filter(User.uid==uid).one_or_none()
+    return user
+
+
+def fetch_user_by_name(sess: Session, name: str) -> Optional[User]:
+    """fetch user by user name
+
+    Args:
+        sess (Session): sqlalchemy session
+        name (str): username
+
+    Returns:
+        Optional[User]: a User object
+    """
+    user = sess.query(User).filter(User.uname == name).one_or_none()
+    return user
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Must specify name of an sqa formatted db")
@@ -47,3 +76,7 @@ if __name__ == "__main__":
         print(row)
     nrows = count_vocab(sess)
     print(f"nrows: {nrows}")
+    user1 = fetch_user_by_id(sess, 1)
+    print(f"User1 {user1}")
+    user2 = fetch_user_by_name(sess, "agold")
+    print(f"User2 {user2}")
