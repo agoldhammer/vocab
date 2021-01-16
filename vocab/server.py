@@ -5,7 +5,13 @@ from flask import Flask, request, session
 from flask_sqlalchemy import SQLAlchemy
 
 # from vocab.users import User, UsersDB
-from vocab.datafetch import count_vocab, fetch_slugs, fetch_user_by_id, fetch_user_by_name
+from vocab.datafetch import (
+    count_vocab,
+    fetch_slugs,
+    fetch_user_by_id,
+    fetch_user_by_name,
+)
+
 # from vocab.fileman import db_connect
 from vocab.models import User
 
@@ -15,13 +21,13 @@ class ServerException(Exception):
 
 
 site_path = "/Users/agold/Prog/lexy/public"
-app = Flask(__name__,
-            static_folder=site_path,
-            template_folder=site_path)
-app.secret_key = b'96\x91Q\xf1N\x86\x1b\xc3&1\x92\x9f\tU\xca'
+app = Flask(__name__, static_folder=site_path, template_folder=site_path)
+app.secret_key = b"96\x91Q\xf1N\x86\x1b\xc3&1\x92\x9f\tU\xca"
 
 # FIXME: this is temporary!!
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////Users/agold/Dropbox/Vocabulary/dbs/redux.db"
+app.config[
+    "SQLALCHEMY_DATABASE_URI"
+] = "sqlite:////Users/agold/Dropbox/Vocabulary/dbs/redux.db"
 db = SQLAlchemy(app)
 
 
@@ -44,7 +50,7 @@ def load_user(uid: int) -> Optional[User]:
 
     Returns:
         models.User or None: [user]
-    """    
+    """
     print(f"load user looking for uid: {uid}")
     user = fetch_user_by_id(db.session, uid)
     if user is not None:
@@ -95,10 +101,7 @@ def fetch():
         print("fetching")
 
         slugs = fetch_slugs(db.session, 50)
-        resp = {"slugs": slugs,
-                "count": len(slugs),
-                "dir": "fwd",
-                "unlearned": False}
+        resp = {"slugs": slugs, "count": len(slugs), "dir": "fwd", "unlearned": False}
         print(resp)
         return resp
     except ServerException as e:
@@ -120,8 +123,6 @@ def login():
     if user.is_authenticated(pw):
         session["username"] = username
         session["uid"] = user.user["rowid"]
-        return {"login": "ok",
-                "active-db": lang.lower(),
-                "total": total}
+        return {"login": "ok", "active-db": lang.lower(), "total": total}
     else:
         return {"login": "rejected"}
