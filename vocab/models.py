@@ -38,11 +38,9 @@ class User(Base):  # type: ignore
     # functions for use by flask_login
 
     def is_authenticated(self, password):
-        if self.user is None:
-            return False
         print(f"checking password {password}")
-        print(f"pw, hash: {self.user.pw}, {self.user.hash}")
-        return check_password_hash(self.user.hash, password)
+        print(f"hash: {self.hash}")
+        return check_password_hash(self.hash, password)
 
     def is_active(self, username):
         return True
@@ -51,10 +49,7 @@ class User(Base):  # type: ignore
         return False
 
     def get_id(self):
-        if self.user is not None:
-            return self.user.uid
-        else:
-            return None
+        return self.uid
 
     def set_password(self, password):
         self.hash = generate_password_hash(password)

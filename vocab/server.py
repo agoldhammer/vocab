@@ -27,7 +27,7 @@ app.secret_key = b"96\x91Q\xf1N\x86\x1b\xc3&1\x92\x9f\tU\xca"
 # FIXME: this is temporary!!
 app.config[
     "SQLALCHEMY_DATABASE_URI"
-] = "sqlite:////Users/agold/Dropbox/Vocabulary/dbs/redux.db"
+] = "sqlite:////Users/agold/Dropbox/Vocabulary/dbs/redux2.db"
 db = SQLAlchemy(app)
 
 
@@ -118,11 +118,11 @@ def login():
     session["active_db"] = lang.lower()
     total = count_vocab(db.session)
     # user = User(username)
-    user = fetch_user_by_name(username)
+    user = fetch_user_by_name(db.session, username)
     fli.login_user(user)
     if user.is_authenticated(pw):
         session["username"] = username
-        session["uid"] = user.user["rowid"]
+        session["uid"] = user.uid
         return {"login": "ok", "active-db": lang.lower(), "total": total}
     else:
         return {"login": "rejected"}
