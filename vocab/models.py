@@ -22,7 +22,9 @@ class Slug(Base):  # type: ignore
     supp = Column(String)
 
     def __repr__(self) -> str:
-        return f"<Slug(id={id}, src={self.src}, target={self.target}, supp={self.supp})>"
+        return (
+            f"<Slug(id={id}, src={self.src}, target={self.target}, supp={self.supp})>"
+        )
 
 
 class User(Base):  # type: ignore
@@ -32,8 +34,9 @@ class User(Base):  # type: ignore
     uname = Column(String)
     # pw = Column(String)
     hash = Column(Integer)
-    scores = relationship("Score", back_populates="users",
-                          cascade="all, delete, delete-orphan")
+    scores = relationship(
+        "Score", back_populates="users", cascade="all, delete, delete-orphan"
+    )
 
     # functions for use by flask_login
 

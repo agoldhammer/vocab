@@ -1,8 +1,8 @@
 
-from vocab.models import User
-from werkzeug.security import check_password_hash
+# from vocab.models import User
+# from werkzeug.security import check_password_hash
 
-#FIXME: should be able to get rid of this whole module
+# FIXME: should be able to get rid of this whole module
 
 # from vocab.fileman import db_connect
 
