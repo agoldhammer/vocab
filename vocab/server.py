@@ -28,6 +28,9 @@ app.secret_key = b"96\x91Q\xf1N\x86\x1b\xc3&1\x92\x9f\tU\xca"
 app.config[
     "SQLALCHEMY_DATABASE_URI"
 ] = "sqlite:////Users/agold/Dropbox/Vocabulary/dbs/redux2.db"
+
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
 # db uri is initialized in the login function according to requested lang
 # german, _ = db_exists("german")
 # italian, _ = db_exists("italian")
