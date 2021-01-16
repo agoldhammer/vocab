@@ -28,7 +28,18 @@ app.secret_key = b"96\x91Q\xf1N\x86\x1b\xc3&1\x92\x9f\tU\xca"
 app.config[
     "SQLALCHEMY_DATABASE_URI"
 ] = "sqlite:////Users/agold/Dropbox/Vocabulary/dbs/redux2.db"
+# db uri is initialized in the login function according to requested lang
+# german, _ = db_exists("german")
+# italian, _ = db_exists("italian")
+# SQLALCHEMY_BINDS = {
+#     "german": "mysqldb://localhost/users",
+#     "italian": "sqlite:////path/to/appmeta.db",
+# }
 db = SQLAlchemy(app)
+
+# class AppDB():
+#     def __init__(self) -> None:
+#         self.engine = None
 
 
 def unauth_callback():
@@ -115,7 +126,7 @@ def login():
     pw = login_data["password"]
     lang = login_data["lang"]
     print(f"login: {username} {pw} {lang}")
-    session["active_db"] = lang.lower()
+    # dbname is made from lowercased lang request
     total = count_vocab(db.session)
     # user = User(username)
     user = fetch_user_by_name(db.session, username)

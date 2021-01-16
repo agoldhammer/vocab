@@ -4,6 +4,7 @@ import shutil
 import sqlite3
 from configparser import ConfigParser
 from pathlib import Path
+from typing import Tuple
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -39,7 +40,7 @@ def make_fqname(fname, fpath):
     return fqname
 
 
-def db_exists(dbname):
+def db_exists(dbname: str) -> Tuple[str, bool]:
     fqdbname = make_fqname(dbname, DBDIR)
     return fqdbname, os.path.exists(fqdbname)
 

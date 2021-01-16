@@ -1,8 +1,8 @@
 import sys
 
-from sqlalchemy import create_engine
+# from sqlalchemy import create_engine
 
-from vocab.fileman import db_connect, db_exists, make_fqname, DBDIR, get_session
+from vocab.fileman import db_connect, db_exists, get_session
 from vocab.models import Slug
 
 """
