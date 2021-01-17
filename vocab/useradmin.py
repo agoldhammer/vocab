@@ -1,6 +1,6 @@
 from vocab.fileman import get_session
 from vocab.models import Score, User
-from typing import Optional, TYPE_CHECKING
+from typing import Optional
 
 
 class QueryError(Exception):
@@ -8,8 +8,7 @@ class QueryError(Exception):
 
 
 def add_user(dbname: str, name: str, pw: str):
-    if not TYPE_CHECKING:
-        user = User(name, 0)
+    user = User(uname=name)  # type: ignore
     # create hash from password and save in user
     user.set_password(pw)
     sess = get_session(dbname)

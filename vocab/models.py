@@ -32,7 +32,6 @@ class User(Base):  # type: ignore
 
     uid = Column(Integer, primary_key=True)
     uname = Column(String)
-    # pw = Column(String)
     hash = Column(Integer)
     scores = relationship(
         "Score", back_populates="users", cascade="all, delete, delete-orphan"
