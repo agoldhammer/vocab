@@ -24,25 +24,9 @@ site_path = "/Users/agold/Prog/lexy/public"
 app = Flask(__name__, static_folder=site_path, template_folder=site_path)
 app.secret_key = b"96\x91Q\xf1N\x86\x1b\xc3&1\x92\x9f\tU\xca"
 
-# FIXME: this is temporary!!
-app.config[
-    "SQLALCHEMY_DATABASE_URI"
-] = "sqlite:////Users/agold/Dropbox/Vocabulary/dbs/redux2.db"
+app.config.from_envvar("SETTINGS")
 
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-# db uri is initialized in the login function according to requested lang
-# german, _ = db_exists("german")
-# italian, _ = db_exists("italian")
-# SQLALCHEMY_BINDS = {
-#     "german": "mysqldb://localhost/users",
-#     "italian": "sqlite:////path/to/appmeta.db",
-# }
 db = SQLAlchemy(app)
-
-# class AppDB():
-#     def __init__(self) -> None:
-#         self.engine = None
 
 
 def unauth_callback():
