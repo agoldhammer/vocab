@@ -1,17 +1,14 @@
+import os
+import sys
 from typing import Optional
 
 import flask_login as fli
 from flask import Flask, request, session
 from flask_sqlalchemy import SQLAlchemy
 
-# from vocab.users import User, UsersDB
-from vocab.datafetch import (
-    count_vocab,
-    fetch_slugs,
-    fetch_user_by_id,
-    fetch_user_by_name,
-)
-
+from vocab.datafetch import (count_vocab, fetch_slugs, fetch_user_by_id,
+                             fetch_user_by_name)
+from vocab.fileman import db_exists
 # from vocab.fileman import db_connect
 from vocab.models import User
 
@@ -24,7 +21,22 @@ site_path = "/Users/agold/Prog/lexy/public"
 app = Flask(__name__, static_folder=site_path, template_folder=site_path)
 app.secret_key = b"96\x91Q\xf1N\x86\x1b\xc3&1\x92\x9f\tU\xca"
 
-app.config.from_envvar("SETTINGS")
+# app.config.from_envvar("SETTINGS")
+lang = os.environ.get("LANG")
+print(f"Language {lang}")
+if lang is not None:
+    dbpath, dbexists = db_exists(lang)
+    if dbexists:
+        dbpath = "sqlite:///" + str(dbpath)
+        print(f"dbpath: {dbpath}")
+        app.config["SQLALCHEMY_DATABASE_URI"] = dbpath
+        app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    else:
+        print(f"Database {dbpath} does not exist")
+        sys.exit(1)
+else:
+    print("Must specify LANG env var in server setup script")
+    sys.exit(1)
 
 db = SQLAlchemy(app)
 
@@ -38,6 +50,7 @@ login_manager.login_view = "login"
 login_manager.unauthorized_handler = unauth_callback
 
 
+# TODO: Check if uid should be unicode string per flask
 # https://github.com/shihanng/flask-login-example
 @login_manager.user_loader
 def load_user(uid: int) -> Optional[User]:
@@ -56,28 +69,6 @@ def load_user(uid: int) -> Optional[User]:
     else:
         print(f"User uid {uid} not found")
     return user
-
-
-# @app.route("/files/<pattern>")
-# def get_files(pattern):
-#     files = get_all_dbs(pattern)
-#     return {"files": files}
-
-
-# @app.route("/seldb/<dbname>")
-# def sel_db(dbname):
-#     session["active_db"] = dbname
-#     return {"ok": "active db set"}
-
-
-# def get_conn():
-#     if "active_db" in session:
-#         dbname = session["active_db"].lower()
-#         print(f"get_conn: dbname {dbname}")
-#         conn = db_connect(dbname)
-#         return conn
-#     else:
-#         raise(ServerException("active db not set"))
 
 
 @app.route("/getcount")
