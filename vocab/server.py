@@ -54,7 +54,7 @@ login_manager.unauthorized_handler = unauth_callback
 # TODO: Check if uid should be unicode string per flask
 # https://github.com/shihanng/flask-login-example
 @login_manager.user_loader
-def load_user(uid: int) -> Optional[User]:
+def load_user(uid: str) -> Optional[User]:
     """load user with given id
 
     Args:
@@ -64,7 +64,7 @@ def load_user(uid: int) -> Optional[User]:
         models.User or None: [user]
     """
     print(f"load user looking for uid: {uid}")
-    user = fetch_user_by_id(db.session, uid)
+    user = fetch_user_by_id(db.session, int(uid))
     if user is not None:
         print(f"User uid {user.uname} is {user}, loaded")
     else:
@@ -104,16 +104,16 @@ def login():
     login_data = request.get_json(force=True)
     username = login_data["username"]
     pw = login_data["password"]
-    # lang = login_data["lang"]
     print(f"login: {username} {pw} {lang}")
-    # dbname is made from lowercased lang request
     total = count_vocab(db.session)
     # user = User(username)
     user = fetch_user_by_name(db.session, username)
-    fli.login_user(user)
-    if user.is_authenticated(pw):
+    print(f"user fetched: {user}")
+    if user is not None and user.is_authenticated(pw):
+        fli.login_user(user)
         session["username"] = username
-        session["uid"] = user.uid
         return {"login": "ok", "active-db": lang, "total": total}
     else:
+        session["_user_id"] = 0  # set to an invalid uid
+        print(f"Login rejected for user {username} sess {session}")
         return {"login": "rejected"}

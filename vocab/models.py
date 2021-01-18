@@ -51,7 +51,7 @@ class User(Base):  # type: ignore
         return False
 
     def get_id(self):
-        return self.uid
+        return str(self.uid)
 
     def set_password(self, password):
         self.hash = generate_password_hash(password)
