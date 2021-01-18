@@ -25,6 +25,7 @@ app.secret_key = b"96\x91Q\xf1N\x86\x1b\xc3&1\x92\x9f\tU\xca"
 lang = os.environ.get("LANG")
 print(f"Language {lang}")
 if lang is not None:
+    lang = lang.lower()
     dbpath, dbexists = db_exists(lang)
     if dbexists:
         dbpath = "sqlite:///" + str(dbpath)
@@ -99,10 +100,11 @@ def fetch():
 
 @app.route("/login", methods=["POST"])
 def login():
+    global lang
     login_data = request.get_json(force=True)
     username = login_data["username"]
     pw = login_data["password"]
-    lang = login_data["lang"]
+    # lang = login_data["lang"]
     print(f"login: {username} {pw} {lang}")
     # dbname is made from lowercased lang request
     total = count_vocab(db.session)
@@ -112,6 +114,6 @@ def login():
     if user.is_authenticated(pw):
         session["username"] = username
         session["uid"] = user.uid
-        return {"login": "ok", "active-db": lang.lower(), "total": total}
+        return {"login": "ok", "active-db": lang, "total": total}
     else:
         return {"login": "rejected"}
