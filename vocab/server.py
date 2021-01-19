@@ -1,9 +1,16 @@
-from flask import (Flask, session, request)
-import flask_login as fli
+import os
+import sys
+from typing import Optional
 
-from vocab.fileman import db_connect
-from vocab.practice import get_count, fetch_nitems
-from vocab.users import User, UsersDB
+import flask_login as fli
+from flask import Flask, request, session
+from flask_sqlalchemy import SQLAlchemy
+
+from vocab.datafetch import (count_vocab, fetch_slugs, fetch_user_by_id,
+                             fetch_user_by_name)
+from vocab.fileman import db_exists
+# from vocab.fileman import db_connect
+from vocab.models import User
 
 
 class ServerException(Exception):
@@ -11,53 +18,58 @@ class ServerException(Exception):
 
 
 site_path = "/Users/agold/Prog/lexy/public"
-app = Flask(__name__,
-            static_folder=site_path,
-            template_folder=site_path)
-app.secret_key = b'96\x91Q\xf1N\x86\x1b\xc3&1\x92\x9f\tU\xca'
+app = Flask(__name__, static_folder=site_path, template_folder=site_path)
+app.secret_key = b"96\x91Q\xf1N\x86\x1b\xc3&1\x92\x9f\tU\xca"
+
+# app.config.from_envvar("SETTINGS")
+lang = os.environ.get("LANG")
+print(f"Language {lang}")
+if lang is not None:
+    lang = lang.lower()
+    dbpath, dbexists = db_exists(lang)
+    if dbexists:
+        dbpath = "sqlite:///" + str(dbpath)
+        print(f"dbpath: {dbpath}")
+        app.config["SQLALCHEMY_DATABASE_URI"] = dbpath
+        app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    else:
+        print(f"Database {dbpath} does not exist")
+        sys.exit(1)
+else:
+    print("Must specify LANG env var in server setup script")
+    sys.exit(1)
+
+db = SQLAlchemy(app)
 
 
 def unauth_callback():
     return {"access": "unauthorized"}
+
 
 login_manager = fli.LoginManager(app)
 login_manager.login_view = "login"
 login_manager.unauthorized_handler = unauth_callback
 
 
+# TODO: Check if uid should be unicode string per flask
 # https://github.com/shihanng/flask-login-example
 @login_manager.user_loader
-def load_user(uid: str):
+def load_user(uid: str) -> Optional[User]:
+    """load user with given id
+
+    Args:
+        uid (int): user id
+
+    Returns:
+        models.User or None: [user]
+    """
     print(f"load user looking for uid: {uid}")
-    users_db = UsersDB("users")
-    print(f"load user loaded {users_db.id_to_record(uid)}")
-    row = users_db.id_to_record(uid)
-    if row is not None:
-        return User(row['username'])
+    user = fetch_user_by_id(db.session, int(uid))
+    if user is not None:
+        print(f"User uid {user.uname} is {user}, loaded")
     else:
-        return None
-
-
-# @app.route("/files/<pattern>")
-# def get_files(pattern):
-#     files = get_all_dbs(pattern)
-#     return {"files": files}
-
-
-# @app.route("/seldb/<dbname>")
-# def sel_db(dbname):
-#     session["active_db"] = dbname
-#     return {"ok": "active db set"}
-
-
-def get_conn():
-    if "active_db" in session:
-        dbname = session["active_db"].lower()
-        print(f"get_conn: dbname {dbname}")
-        conn = db_connect(dbname)
-        return conn
-    else:
-        raise(ServerException("active db not set"))
+        print(f"User uid {uid} not found")
+    return user
 
 
 @app.route("/getcount")
@@ -65,10 +77,7 @@ def get_conn():
 def getcount():
     print(request.headers)
     try:
-        conn = get_conn()
-        # total, nfrom, nto = get_count(conn)
-        total = get_count(conn)
-        conn.close()
+        total = count_vocab(db.session)
         resp = {"total": total}
         return resp
     except ServerException as e:
@@ -80,14 +89,10 @@ def getcount():
 def fetch():
     try:
         print("fetching")
-        conn = get_conn()
-        curs = conn.cursor()
-        slugs = fetch_nitems(curs, 50, True, False, web=True)
-        conn.close()
-        resp = {"slugs": slugs,
-                "count": len(slugs),
-                "dir": "fwd",
-                "unlearned": False}
+
+        slugs = fetch_slugs(db.session, 50)
+        resp = {"slugs": slugs, "count": len(slugs), "dir": "fwd", "unlearned": False}
+        print(resp)
         return resp
     except ServerException as e:
         return f"Internal error: {e}", 500
@@ -95,21 +100,20 @@ def fetch():
 
 @app.route("/login", methods=["POST"])
 def login():
+    global lang
     login_data = request.get_json(force=True)
     username = login_data["username"]
     pw = login_data["password"]
-    lang = login_data["lang"]
     print(f"login: {username} {pw} {lang}")
-    session["active_db"] = lang.lower()
-    conn = get_conn()
-    total = get_count(conn)
-    user = User(username)
-    fli.login_user(user)
-    if user.is_authenticated(pw):
+    total = count_vocab(db.session)
+    # user = User(username)
+    user = fetch_user_by_name(db.session, username)
+    print(f"user fetched: {user}")
+    if user is not None and user.is_authenticated(pw):
+        fli.login_user(user)
         session["username"] = username
-        session["uid"] = user.user["rowid"]
-        return {"login": "ok",
-                "active-db": lang.lower(),
-                "total": total}
+        return {"login": "ok", "active-db": lang, "total": total}
     else:
+        session["_user_id"] = 0  # set to an invalid uid
+        print(f"Login rejected for user {username} sess {session}")
         return {"login": "rejected"}

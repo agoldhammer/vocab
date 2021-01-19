@@ -1,12 +1,18 @@
 # file manager for slexy
-from configparser import ConfigParser
 import os
 import shutil
 import sqlite3
+from configparser import ConfigParser
 from pathlib import Path
+from typing import Tuple
 
-# DBDIR = "Prog/vocab/vocab"
-# VOCABDIR = "Google Drive/Vocabulary"
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.session import Session
+
+# this is a singleton, created and accessed through get_vocab_engine
+_vocab_engine = None
+
 
 config = ConfigParser()
 config.read(Path.home() / ".vocab/vocab.ini")
@@ -34,7 +40,7 @@ def make_fqname(fname, fpath):
     return fqname
 
 
-def db_exists(dbname):
+def db_exists(dbname: str) -> Tuple[str, bool]:
     fqdbname = make_fqname(dbname, DBDIR)
     return fqdbname, os.path.exists(fqdbname)
 
@@ -90,3 +96,35 @@ def get_all_dbs(lang):
     pattern = Path.home() / Path(DBDIR)
     paths = pattern.glob(f"{lang}*.db")
     return [path.stem for path in paths]
+
+
+def get_vocab_engine(dbname: str):
+    """return (creating if necessary) engine for vocab db
+
+    Args:
+        dbname (str): base name of vocab db
+
+    Returns:
+        sqlalchemy.Engine: the engine
+    """
+    global _vocab_engine
+    if _vocab_engine is None:
+        fqmasterdbname = make_fqname(dbname, DBDIR)
+        url = f"sqlite:///{fqmasterdbname}"
+        print(f"conn to url: {url}")
+        _vocab_engine = create_engine(url)
+    return _vocab_engine
+
+
+def get_session(dbname: str) -> Session:
+    """get a session from the current engine
+
+    Args:
+        dbname (str): name of sqlalchemy db
+
+    Returns:
+        Session: ORM session object
+    """
+    engine = get_vocab_engine(dbname)
+    Session = sessionmaker(bind=engine)
+    return Session()

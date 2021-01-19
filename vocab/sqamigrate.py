@@ -1,9 +1,12 @@
 import sys
 
-from vocab.fileman import db_connect, db_exists
+# from sqlalchemy import create_engine
+
+from vocab.fileman import db_connect, db_exists, get_session
+from vocab.models import Slug
 
 """
-Module to migrate from original single-user design dbs to new multiuser design
+Module to migrate from original design dbs to sqlalchemy design
 """
 
 
@@ -20,18 +23,17 @@ def migrate(masterdb_name, old_db_name):
     else:
         print(f"{old_db_name} not found")
         sys.exit(1)
-    conn = db_connect(masterdb_name)
+    conn = db_connect(old_db_name)
     curs = conn.cursor()
     curs.execute(
         f"""
-       ATTACH DATABASE '{old_db_fqname}' AS old_db;
+       SELECT * FROM vocab;
         """
     )
-    curs.execute(
-     "INSERT INTO vocab SELECT src, target, supp FROM old_db.vocab"
-    )
-    curs.close()
-    conn.commit()
+    session = get_session(masterdb_name)
+    slugs = [Slug(src=item[0], target=item[1], supp=item[2]) for item in curs]
+    session.add_all(slugs)
+    session.commit()
 
 
 if __name__ == "__main__":
