@@ -114,6 +114,7 @@ def login():
         session["username"] = username
         return {"login": "ok", "active-db": lang, "total": total}
     else:
-        session["_user_id"] = 0  # set to an invalid uid
+        # session["_user_id"] = 0  # set to an invalid uid
+        fli.logout_user()
         print(f"Login rejected for user {username} sess {session}")
         return {"login": "rejected"}
