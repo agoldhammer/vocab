@@ -5,7 +5,7 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.expression import func
 
 from vocab.fileman import get_session
-from vocab.models import Slug, User
+from vocab.models import Slug, User, Score
 
 
 def fetch_slugs(sess: Session, num_to_fetch: int = 25) -> Tuple[int, str, str, str]:
@@ -64,6 +64,24 @@ def fetch_user_by_name(sess: Session, name: str) -> Optional[User]:
     return user
 
 
+def fetch_score(sess: Session, uid: int, wid: int):
+    """get score associated with given uid and wid
+
+    Args:
+        sess (Session): SQLAlchemy session
+        uid (int): user id
+        wid (int): word id
+
+    Returns:
+        [type]: Score
+    """
+    scores = sess.query(User).filter(User.uid == uid)
+    score = scores.filter(Score.wid == wid).one_or_none()
+    if score is None:
+        return Score(uid=uid, wid=wid, lrndsrc=0, lrndtgt=0, nseen=0)  # type: ignore
+    return score
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Must specify name of an sqa formatted db")
@@ -79,3 +97,5 @@ if __name__ == "__main__":
     print(f"User1 {user1}")
     user2 = fetch_user_by_name(sess, "agold")
     print(f"User2 {user2}")
+    score = fetch_score(sess, 1, 1)
+    print(f"Score for uid 1 wid 1: {score}")

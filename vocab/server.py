@@ -7,7 +7,7 @@ from flask import Flask, request, session
 from flask_sqlalchemy import SQLAlchemy
 
 from vocab.datafetch import (count_vocab, fetch_slugs, fetch_user_by_id,
-                             fetch_user_by_name)
+                             fetch_user_by_name, fetch_score)
 from vocab.fileman import db_exists
 # from vocab.fileman import db_connect
 from vocab.models import User
@@ -96,6 +96,15 @@ def fetch():
         return resp
     except ServerException as e:
         return f"Internal error: {e}", 500
+
+
+@app.route("/getscore/<wid>")
+@fli.login_required
+def get_score(wid):
+    wid = int(wid)
+    # uname = session["username"]
+    user = fli.current_user
+    print(f"getscore: {wid}, {user}")
 
 
 @app.route("/login", methods=["POST"])
