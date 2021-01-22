@@ -110,7 +110,7 @@ def get_score(wid):
     wid = int(wid)
     user = fli.current_user
     uid = user.uid
-    print(f"getscore {uid}")
+    # print(f"getscore {uid}")
     score = fetch_score(db.session, uid, wid)
     print(f"getscore: {wid}, {uid}, {score}")
     return {
