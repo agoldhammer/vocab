@@ -114,6 +114,7 @@ def get_score(wid):
     score = fetch_score(db.session, uid, wid)
     print(f"getscore: {wid}, {uid}, {score}")
     return {
+        "sid": score.sid,
         "uid": score.uid,
         "wid": score.wid,
         "lrndsrc": score.lrndsrc,
