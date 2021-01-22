@@ -6,9 +6,15 @@ import flask_login as fli
 from flask import Flask, request, session
 from flask_sqlalchemy import SQLAlchemy
 
-from vocab.datafetch import (count_vocab, fetch_slugs, fetch_user_by_id,
-                             fetch_user_by_name, fetch_score)
+from vocab.datafetch import (
+    count_vocab,
+    fetch_slugs,
+    fetch_user_by_id,
+    fetch_user_by_name,
+    fetch_score,
+)
 from vocab.fileman import db_exists
+
 # from vocab.fileman import db_connect
 from vocab.models import User
 
@@ -102,9 +108,18 @@ def fetch():
 @fli.login_required
 def get_score(wid):
     wid = int(wid)
-    # uname = session["username"]
     user = fli.current_user
-    print(f"getscore: {wid}, {user}")
+    uid = user.uid
+    print(f"getscore {uid}")
+    score = fetch_score(db.session, uid, wid)
+    print(f"getscore: {wid}, {uid}, {score}")
+    return {
+        "uid": score.uid,
+        "wid": score.wid,
+        "lrndsrc": score.lrndsrc,
+        "lrndtgt": score.lrndtgt,
+        "nseen": score.nseen,
+    }
 
 
 @app.route("/login", methods=["POST"])
