@@ -7,6 +7,8 @@ from sqlalchemy.sql.expression import func
 from vocab.fileman import get_session
 from vocab.models import Slug, User, Score
 
+# Database interface module
+
 
 def fetch_slugs(sess: Session, num_to_fetch: int = 25) -> Tuple[int, str, str, str]:
     """[fetch the vocab items from lexicon]
@@ -80,6 +82,46 @@ def fetch_score(sess: Session, uid: int, wid: int):
     if score is None:
         return Score(sid=None, uid=uid, wid=wid, lrndsrc=0, lrndtgt=0, nseen=0)  # type: ignore
     return score
+
+
+def score_update(sess: Session, **updated_score):
+    """Take modified score from the client and update db
+
+    Args:
+        sess (Session): SQLAlchemy session
+        updated_score (dict): dict with all components of score
+    """
+    # incoming score is a dictionary
+    print(f"score_update {updated_score}")
+    score = Score(**updated_score)  # type: ignore
+    print(score)
+    if score.sid is None:
+        sess.add(score)
+    else:
+        sid = score.sid
+        updated_score.pop("sid")
+        sess.query(Score).filter(Score.sid == sid).update(**updated_score)
+    sess.commit()
+
+
+def slug_update(sess: Session, **updated_slug):
+    """Take modified slug from client and update db
+
+    Args:
+        sess (Session): SQLAlchemy session
+        updated_slug (dict): dict with all components of slug
+    """
+    # incomiing slug is a dictionary
+    print(f"slug_update {updated_slug}")
+    slug = Slug(**updated_slug)  # type: ignore
+    print(slug)
+    if slug.wid is None:
+        sess.add(slug)
+    else:
+        wid = slug.wid
+        updated_slug.pop("wid")
+        sess.query(Slug).filter(Slug.wid == wid).update()
+    sess.commit()
 
 
 if __name__ == "__main__":

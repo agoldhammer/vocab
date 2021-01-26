@@ -6,12 +6,14 @@ import flask_login as fli
 from flask import Flask, request, session
 from flask_sqlalchemy import SQLAlchemy
 
-from vocab.datafetch import (
+from vocab.dbif import (
     count_vocab,
     fetch_slugs,
     fetch_user_by_id,
     fetch_user_by_name,
     fetch_score,
+    score_update,
+    slug_update,
 )
 from vocab.fileman import db_exists
 
@@ -150,6 +152,7 @@ def login():
 def updatescore():
     data = request.get_json(force=True)
     print(f"update score {data}")
+    score_update(db.session, **data)
     return {"update score": "ok"}
 
 
@@ -158,4 +161,5 @@ def updatescore():
 def updateslug():
     data = request.get_json(force=True)
     print(f"update slug {data}")
+    slug_update(db.session, **data)
     return {"update slug": "ok"}
