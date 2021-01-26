@@ -77,8 +77,11 @@ def fetch_score(sess: Session, uid: int, wid: int):
     Returns:
         [type]: Score
     """
-    scores = sess.query(User).filter(User.uid == uid)
-    score = scores.filter(Score.wid == wid).one_or_none()
+    # scores = sess.query(User).filter(User.uid == uid)
+    print(f"fetch_score uid {uid} wid {wid}")
+    score = sess.query(Score).filter(Score.wid == wid).\
+        filter(Score.uid == uid).one_or_none()
+    print(f"score {score}")
     if score is None:
         return Score(sid=None, uid=uid, wid=wid, lrndsrc=0, lrndtgt=0, nseen=0)  # type: ignore
     return score

@@ -106,7 +106,7 @@ def fetch():
         return f"Internal error: {e}", 500
 
 
-@app.route("/getscore/<wid>")
+@app.route("/getscore/<int:wid>")
 @fli.login_required
 def get_score(wid):
     wid = int(wid)
