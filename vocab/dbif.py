@@ -100,7 +100,8 @@ def score_update(sess: Session, **updated_score):
     else:
         sid = score.sid
         updated_score.pop("sid")
-        sess.query(Score).filter(Score.sid == sid).update(**updated_score)
+        sess.query(Score).filter(Score.sid == sid).update(
+            updated_score, synchronize_session="fetch")
     sess.commit()
 
 
@@ -120,7 +121,9 @@ def slug_update(sess: Session, **updated_slug):
     else:
         wid = slug.wid
         updated_slug.pop("wid")
-        sess.query(Slug).filter(Slug.wid == wid).update()
+        sess.query(Slug).filter(Slug.wid == wid).update(
+            updated_slug, synchronize_session="fetch"
+        )
     sess.commit()
 
 
