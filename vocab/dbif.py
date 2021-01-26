@@ -103,6 +103,8 @@ def score_update(sess: Session, **updated_score):
     else:
         sid = score.sid
         updated_score.pop("sid")
+        if updated_score["uid"] is None or updated_score["wid"] is None:
+            raise ValueError(f"uid or wid missing in {updated_score}")
         sess.query(Score).filter(Score.sid == sid).update(
             updated_score, synchronize_session="fetch")
     sess.commit()
