@@ -143,3 +143,19 @@ def login():
         fli.logout_user()
         print(f"Login rejected for user {username} sess {session}")
         return {"login": "rejected"}
+
+
+@app.route("/updatescore", methods=["POST"])
+@fli.login_required
+def updatescore():
+    data = request.get_json(force=True)
+    print(f"update score {data}")
+    return {"update score": "ok"}
+
+
+@app.route("/updateslug", methods=["POST"])
+@fli.login_required
+def updateslug():
+    data = request.get_json(force=True)
+    print(f"update slug {data}")
+    return {"update slug": "ok"}
