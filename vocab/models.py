@@ -33,9 +33,9 @@ class User(Base):  # type: ignore
     uid = Column(Integer, primary_key=True)
     uname = Column(String)
     hash = Column(Integer)
-    scores = relationship(
-        "Score", back_populates="users", cascade="all, delete, delete-orphan"
-    )
+    # scores = relationship(
+    #     "Score", back_populates="users", cascade="all, delete, delete-orphan"
+    # )
 
     # functions for use by flask_login
 
@@ -69,7 +69,7 @@ class Score(Base):
     lrndsrc = Column(Integer)
     lrndtgt = Column(Integer)
     nseen = Column(Integer)
-    users = relationship("User", back_populates="scores")
+    # users = relationship("User", back_populates="scores")
 
     def __repr__(self) -> str:
         return f"<Score(sid={self.sid}, uid={self.uid}, wid={self.wid},\
