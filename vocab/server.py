@@ -86,7 +86,7 @@ def getcount():
     print(request.headers)
     try:
         total = count_vocab(db.session)
-        resp = {"total": total}
+        resp = {"total": total, "lang": lang}
         return resp
     except ServerException as e:
         return f"Internal error {e}", 500
@@ -99,7 +99,7 @@ def fetch():
         print("fetching")
 
         slugs = fetch_slugs(db.session, 50)
-        resp = {"slugs": slugs, "count": len(slugs), "dir": "fwd", "unlearned": False}
+        resp = {"slugs": slugs, "count": len(slugs)}
         print(resp)
         return resp
     except ServerException as e:
