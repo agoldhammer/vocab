@@ -26,7 +26,7 @@ def migrate(masterdb_name, old_db_name):
     conn = db_connect(old_db_name)
     curs = conn.cursor()
     curs.execute(
-        f"""
+        """
        SELECT * FROM vocab;
         """
     )
