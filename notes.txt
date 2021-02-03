@@ -1,23 +1,24 @@
-central command is slexy
-slexy addvocab --store German8 german
-slexy practice -n 57 german
+add vocabulary
+    slexy addvocab --store German8 german
+create new sqlalchemy db
+    slexy createsqldb dbname
+add user
+    slexy new-user uname pw
+migrate from old model db:
+    python sqamigrate.py newdb olddb
 
-vocabulary in .docx files formatted thus:
-gut: good: explanatory stuff if desired
-
-Notes on server
-/files : retrieves file list
-/seldb/<dbname> : sets active db
-/getcount : retrieves counts as a dic of 3 items
-/getslugs : retrieves ndesired slugs
-
-On windows, need:
-/mnt/c/Users/artgo/Google Drive
-not /home/agold/mnt/c/Google Drive
-fixed by linking Google Drive to ~/Google_Drive
+Superseded:
+    On windows, need:
+    /mnt/c/Users/artgo/Google Drive
+    not /home/agold/mnt/c/Google Drive
+    fixed by linking Google Drive to ~/Google_Drive
 
 windows ps:
-Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
-run script
+    Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+    run script
+
+startup server:
+source [pc/mac/etc]-server-setup.sh
+
 
 
