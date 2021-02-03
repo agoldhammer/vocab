@@ -163,3 +163,16 @@ def updateslug():
     print(f"update slug {data}")
     slug_update(db.session, **data)
     return {"update slug": "ok"}
+
+
+@app.route("/addnewslug", methods=["POST"])
+@fli.login_required
+def addnewslug():
+    data = request.get_json(force=True)
+    print(f"add new slug {data}")
+    slug_update(db.session, **data)
+    count = count_vocab(db.session)
+    return {
+        "addnewslug": "ok",
+        "count": count,
+    }
