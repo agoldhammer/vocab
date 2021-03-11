@@ -96,9 +96,9 @@ def getcount():
 @fli.login_required
 def fetch():
     try:
-        print("fetching")
-
-        slugs = fetch_slugs(db.session, 50)
+        num_to_fetch = session["batch_size"]
+        print(f"fetching {num_to_fetch}")
+        slugs = fetch_slugs(db.session, num_to_fetch)
         resp = {"slugs": slugs, "count": len(slugs)}
         print(resp)
         return resp
@@ -131,7 +131,9 @@ def login():
     login_data = request.get_json(force=True)
     username = login_data["username"]
     pw = login_data["password"]
-    print(f"login: {username} {pw} {lang}")
+    batch_size = login_data["bsize"]
+    session["batch_size"] = batch_size
+    print(f"login: {username} {pw} {lang} {batch_size}")
     total = count_vocab(db.session)
     # user = User(username)
     user = fetch_user_by_name(db.session, username)
